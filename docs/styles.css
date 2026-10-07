@@ -149,6 +149,16 @@ h3 {
     border-color: var(--accent);
 }
 
+.language-switch .button[aria-selected="true"] {
+    color: white;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.language-panel[hidden] {
+    display: none;
+}
+
 .section {
     padding: clamp(42px, 7vw, 82px) clamp(20px, 5vw, 72px);
 }
