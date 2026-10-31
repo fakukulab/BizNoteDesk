@@ -1,68 +1,78 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BizNote Desk</title>
-    <meta name="description" content="BizNote Desk는 업무 노트, 회의록, 행사 기록, 명함 정보를 한곳에서 관리하는 생산성 앱입니다.">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BizNote Desk – Mac용 업무 노트와 명함 관리</title>
+<meta name="description" content="BizNote Desk: 회의록, 업무일지, 행사 기록, 명함 정보를 Mac에서 한곳에 / Business notes and business cards on Mac.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
 </head>
 <body>
-    <header class="site-header">
-        <a class="brand" href="./">BizNote Desk</a>
-        <nav aria-label="주요 링크">
-            <a href="./support.html">Support</a>
-            <a href="./privacy.html">Privacy</a>
-        </nav>
-    </header>
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="./"><img class="logo" src="assets/logo.png" alt="" width="36" height="36">BizNote Desk</a>
+  <ul>
+    <li><a class="active" href="./"><span lang="ko">소개</span><span lang="en">Home</span></a></li>
+    <li><a href="support.html"><span lang="ko">지원</span><span lang="en">Support</span></a></li>
+    <li><a href="privacy.html"><span lang="ko">개인정보처리방침</span><span lang="en">Privacy</span></a></li>
+    <li><a href="versions.html"><span lang="ko">버전 정보</span><span lang="en">Releases</span></a></li>
+  </ul>
+  <button class="lang" id="langBtn" aria-label="Language"><span lang="ko">EN</span><span lang="en">한국어</span></button>
+</div></header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <p class="eyebrow">Business note app</p>
-                <h1>업무 노트와 명함 관리를 간결하게</h1>
-                <p class="lead">BizNote Desk는 회의록, 업무일지, 행사 기록, 명함 정보를 한곳에서 정리하고 사용자의 iCloud 계정으로 관리할 수 있는 생산성 앱입니다.</p>
-                <div class="actions">
-                    <a class="button primary" href="#features">주요 기능</a>
-                    <a class="button" href="./support.html">지원 문의</a>
-                </div>
-            </div>
-        </section>
+<section class="hero"><div class="wrap grid">
+  <div>
+    <span class="pill">macOS 15+</span>
+    <h1 lang="ko">업무 노트와 명함 관리를<br><em>Mac에서 간결하게</em></h1>
+    <h1 lang="en">Work notes and business cards,<br><em>simply on your Mac</em></h1>
+    <p class="lead" lang="ko">회의록, 업무일지, 행사 기록, 명함 정보를 한곳에서 정리하고 내 iCloud 계정으로 관리하세요. 로그인 없이 바로 시작할 수 있어요.</p>
+    <p class="lead" lang="en">Keep meeting minutes, work logs, event notes and business cards in one place and manage them with your own iCloud account. No sign-in required.</p>
+    <div class="btns">
+      <a class="btn primary" href="#features"><span lang="ko">주요 기능 보기</span><span lang="en">See features</span></a>
+      <a class="btn" href="support.html"><span lang="ko">지원 문의</span><span lang="en">Get help</span></a>
+    </div>
+    <div class="badges"><span>✓ <span lang="ko">로그인 불필요</span><span lang="en">No sign-in</span></span><span>✓ <span lang="ko">광고·추적 SDK 없음</span><span lang="en">No ads or trackers</span></span><span>✓ <span lang="ko">iCloud 동기화</span><span lang="en">iCloud sync</span></span></div>
+  </div>
+  <div>
+    <div class="mac"><div class="tb"><i></i><i></i><i></i></div>
+      <div class="body"><div class="side"><b>📝 Notes</b><span>📇 Cards</span><span>🎪 Events</span><span>⚙️ Settings</span></div>
+      <div class="main"><div class="m-card c1"><b>김민준 · Minjun Kim</b>Product Manager<br>FAKUKULAB</div><div class="m-card c2"><b>주간 회의록</b>안건 3 · 결정 2 · 후속조치 4</div><div class="m-card c3"><b>전시회 기록</b>만난 사람 12명</div></div></div>
+    </div>
+  </div>
+</div></section>
 
-        <section id="features" class="section">
-            <h2>주요 기능</h2>
-            <div class="feature-grid">
-                <article>
-                    <h3>업무 기록</h3>
-                    <p>업무일지, 회의록, 전시회 기록 등 상황에 맞는 템플릿으로 필요한 내용을 빠르게 작성합니다.</p>
-                </article>
-                <article>
-                    <h3>명함 관리</h3>
-                    <p>명함 이미지를 인식하고 이름, 회사, 연락처 정보를 정리해 업무 관계를 관리합니다.</p>
-                </article>
-                <article>
-                    <h3>iCloud 동기화</h3>
-                    <p>사용자의 개인 iCloud 계정을 통해 지원되는 데이터를 같은 계정의 기기에서 관리할 수 있습니다.</p>
-                </article>
-                <article>
-                    <h3>내보내기</h3>
-                    <p>필요한 기록과 명함 정보를 PDF 또는 스프레드시트 형식으로 내보내 업무 자료로 활용합니다.</p>
-                </article>
-            </div>
-        </section>
+<section id="features"><div class="wrap">
+  <div class="eyebrow">Features</div>
+  <h2 lang="ko">업무에 필요한 기록을 한곳에서</h2><h2 lang="en">Everything you record for work, in one place</h2>
+  <div class="cards">
+    <div class="card"><div class="ico i2">📝</div><h3 lang="ko">업무 기록</h3><h3 lang="en">Work records</h3>
+      <p lang="ko">업무일지, 회의록, 전시회 기록 등 상황에 맞는 템플릿으로 필요한 내용을 빠르게 작성합니다.</p><p lang="en">Write quickly with templates for work logs, meeting minutes and event notes.</p></div>
+    <div class="card"><div class="ico i1">📇</div><h3 lang="ko">명함 관리</h3><h3 lang="en">Business cards</h3>
+      <p lang="ko">명함 이미지를 인식하고 이름, 회사, 연락처 정보를 정리해 업무 관계를 관리합니다.</p><p lang="en">Recognize card images and organize names, companies and contact details.</p></div>
+    <div class="card"><div class="ico i6">☁️</div><h3 lang="ko">iCloud 동기화</h3><h3 lang="en">iCloud sync</h3>
+      <p lang="ko">내 개인 iCloud 계정으로 지원되는 데이터를 같은 계정의 기기에서 관리합니다. iPhone·iPad용 BizNote와 같은 iCloud 컨테이너를 사용해요.</p><p lang="en">Manage supported data across devices on your own iCloud account. Uses the same iCloud container as BizNote for iPhone and iPad.</p></div>
+    <div class="card"><div class="ico i5">📤</div><h3 lang="ko">내보내기</h3><h3 lang="en">Export</h3>
+      <p lang="ko">필요한 기록과 명함 정보를 PDF 또는 스프레드시트로 내보내 업무 자료로 활용하세요.</p><p lang="en">Export records and card details to PDF or spreadsheet files.</p></div>
+    <div class="card"><div class="ico i4">🔗</div><h3 lang="ko">Apple 앱 연동</h3><h3 lang="en">Apple app integration</h3>
+      <p lang="ko">선택하면 행사 일정을 캘린더에, 후속 조치를 미리알림에 추가하고 연락처에서 참석자를 불러올 수 있어요.</p><p lang="en">Optionally add event schedules to Calendar, follow-ups to Reminders, and import attendees from Contacts.</p></div>
+    <div class="card"><div class="ico i3">🔒</div><h3 lang="ko">개인정보 보호</h3><h3 lang="en">Privacy first</h3>
+      <p lang="ko">개발자 서버가 없고, 광고·분석·추적 SDK를 포함하지 않아요.</p><p lang="en">No developer server and no advertising, analytics or tracking SDKs.</p></div>
+  </div>
+</div></section>
 
-        <section class="section split">
-            <div>
-                <h2>개인정보 보호</h2>
-                <p>BizNote는 로그인을 요구하지 않으며, 광고 SDK나 추적 SDK를 포함하지 않습니다. 노트와 명함 데이터는 사용자의 기기 또는 사용자가 선택한 iCloud 계정에 저장됩니다.</p>
-            </div>
-            <a class="button" href="./privacy.html">개인정보 처리방침 보기</a>
-        </section>
-    </main>
+<section class="soft"><div class="wrap">
+  <div class="eyebrow">FAQ</div>
+  <h2 lang="ko">자주 묻는 질문</h2><h2 lang="en">Frequently asked</h2>
+  <details><summary lang="ko">계정이 필요한가요?</summary><summary lang="en">Do I need an account?</summary><p lang="ko">아니요. 별도의 계정 가입이나 로그인이 필요 없습니다.</p><p lang="en">No. There is no registration or sign-in.</p></details>
+  <details><summary lang="ko">데이터는 어디에 저장되나요?</summary><summary lang="en">Where is my data stored?</summary><p lang="ko">내 Mac에 저장되며, iCloud 동기화를 켜면 내 개인 iCloud 계정(CloudKit)을 통해 동기화됩니다.</p><p lang="en">On your Mac. If you turn on iCloud sync, it syncs through your own iCloud account via CloudKit.</p></details>
+  <p style="margin-top:20px"><a href="support.html"><span lang="ko">더 많은 도움말 보기 →</span><span lang="en">More help →</span></a></p>
+</div></section>
 
-    <footer>
-        <p>&copy; 2026 fakuku. All rights reserved.</p>
-        <p><a href="./support.html">Support</a> · <a href="./privacy.html">Privacy Policy</a></p>
-    </footer>
-</body>
-</html>
+<footer class="site"><div class="wrap row">
+  <div>© 2026 FAKUKULAB · <a href="mailto:support@fakukulab.com">support@fakukulab.com</a></div>
+  <div><a href="support.html"><span lang="ko">지원</span><span lang="en">Support</span></a><a href="privacy.html"><span lang="ko">개인정보처리방침</span><span lang="en">Privacy</span></a><a href="versions.html"><span lang="ko">버전 정보</span><span lang="en">Releases</span></a></div>
+</div></footer>
+</body></html>

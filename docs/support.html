@@ -1,77 +1,51 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BizNote Desk Support</title>
-    <meta name="description" content="BizNote Desk 지원, 문의, 자주 묻는 질문">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BizNote Desk 지원 · Support</title>
+<meta name="description" content="BizNote Desk 지원, 문의, 자주 묻는 질문 / Support, contact and FAQ">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js"></script>
 </head>
 <body>
-    <header class="site-header">
-        <a class="brand" href="./">BizNote Desk</a>
-        <nav aria-label="주요 링크">
-            <a href="./support.html">Support</a>
-            <a href="./privacy.html">Privacy</a>
-        </nav>
-    </header>
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="./"><img class="logo" src="assets/logo.png" alt="" width="36" height="36">BizNote Desk</a>
+  <ul>
+    <li><a href="./"><span lang="ko">소개</span><span lang="en">Home</span></a></li>
+    <li><a class="active" href="support.html"><span lang="ko">지원</span><span lang="en">Support</span></a></li>
+    <li><a href="privacy.html"><span lang="ko">개인정보처리방침</span><span lang="en">Privacy</span></a></li>
+    <li><a href="versions.html"><span lang="ko">버전 정보</span><span lang="en">Releases</span></a></li>
+  </ul>
+  <button class="lang" id="langBtn" aria-label="Language"><span lang="ko">EN</span><span lang="en">한국어</span></button>
+</div></header>
 
-    <main class="page">
-        <section class="section">
-            <p class="eyebrow">Support</p>
-            <h1>BizNote Desk 지원</h1>
-            <p class="lead">앱 사용 중 문제가 있거나 App Store 심사 관련 문의가 필요하면 아래 이메일로 연락하세요.</p>
-            <p class="contact">Support email: <a href="mailto:paccbet17@gmail.com">paccbet17@gmail.com</a></p>
-        </section>
+<div class="page-hero"><div class="wrap">
+  <span class="pill">Support</span>
+  <h1 lang="ko">무엇을 도와드릴까요?</h1><h1 lang="en">How can we help?</h1>
+  <p class="meta" lang="ko">BizNote Desk 사용 중 문제가 있거나 App Store 심사 관련 문의가 있으면 연락해 주세요.</p>
+  <p class="meta" lang="en">Questions, problems or App Store review inquiries? We're happy to help.</p>
+</div></div>
+<section><div class="wrap">
+  <div class="contact"><div style="flex:1;min-width:240px"><h2 style="margin:0" lang="ko">이메일 문의</h2><h2 style="margin:0" lang="en">Contact us</h2>
+    <p lang="ko">Mac 모델, macOS 버전, 앱 버전을 함께 알려주시면 더 빠르게 도울 수 있어요.</p><p lang="en">Including your Mac model, macOS version and app version helps us respond faster.</p></div>
+    <a class="btn" href="mailto:support@fakukulab.com?subject=BizNote%20Desk%20Support">support@fakukulab.com</a></div>
+  <h2 style="margin-top:48px" lang="ko">자주 묻는 질문</h2><h2 style="margin-top:48px" lang="en">FAQ</h2>
+  <details><summary lang="ko">BizNote Desk는 계정이 필요한가요?</summary><summary lang="en">Does BizNote Desk need an account?</summary><p lang="ko">아니요. 별도의 계정 가입이나 로그인을 요구하지 않습니다.</p><p lang="en">No. It does not require registration or sign-in.</p></details>
+  <details><summary lang="ko">데이터는 어디에 저장되나요?</summary><summary lang="en">Where is my data stored?</summary><p lang="ko">노트, 명함 정보, 첨부파일, 설정은 내 기기에 저장됩니다. iCloud 동기화를 켠 경우 Apple의 CloudKit을 통해 내 개인 iCloud 계정에 동기화될 수 있습니다.</p><p lang="en">Notes, card details, attachments and settings are stored on your device. If you enable iCloud sync, they may sync to your personal iCloud account via Apple's CloudKit.</p></details>
+  <details><summary lang="ko">개발자가 내 노트나 명함 정보를 볼 수 있나요?</summary><summary lang="en">Can the developer see my notes or cards?</summary><p lang="ko">아니요. 사용자 데이터를 수집하기 위한 별도 개발자 서버를 운영하지 않습니다.</p><p lang="en">No. The developer runs no server for collecting user data.</p></details>
+  <details><summary lang="ko">카메라 권한은 왜 필요한가요?</summary><summary lang="en">Why does it ask for camera access?</summary><p lang="ko">Mac에서 명함을 촬영하고 텍스트를 인식하기 위해 사용됩니다.</p><p lang="en">To capture business cards and recognize text on your Mac.</p></details>
+  <details><summary lang="ko">연락처 권한은 왜 필요한가요?</summary><summary lang="en">Why does it ask for Contacts access?</summary><p lang="ko">명함 정보 저장, 연락처 중복 확인, 연락처 앱으로 정보 추가, 참석자 불러오기에 사용됩니다.</p><p lang="en">To save card details, check duplicates, add information to Contacts and import attendees.</p></details>
+  <details><summary lang="ko">캘린더와 미리알림 권한은 왜 필요한가요?</summary><summary lang="en">Why Calendar and Reminders access?</summary><p lang="ko">설정에서 Apple 앱 연동을 켠 경우에만, 회의·행사·업무 항목을 캘린더 또는 미리알림에 추가하는 데 사용됩니다.</p><p lang="en">Only if you enable Apple app integration in Settings, to add meetings, events and tasks to Calendar or Reminders.</p></details>
+  <details><summary lang="ko">위치 권한은 왜 필요한가요?</summary><summary lang="en">Why does it ask for location?</summary><p lang="ko">회의 장소를 찾거나 현재 위치를 회의·행사 기록에 입력할 때만 사용됩니다.</p><p lang="en">Only when you choose to find a meeting place or enter your current location in a record.</p></details>
+  <details><summary lang="ko">데이터를 삭제하려면 어떻게 하나요?</summary><summary lang="en">How do I delete my data?</summary><p lang="ko">앱 안에서 노트, 명함, 첨부파일, 전시회 기록, 사용자 템플릿을 삭제할 수 있습니다. 로컬 데이터를 모두 지우려면 앱을 삭제하세요. iCloud 동기화를 사용했다면 iCloud 데이터는 Apple의 처리 방식에 따라 남아 있을 수 있습니다.</p><p lang="en">Delete notes, cards, attachments, event records and custom templates in the app. To remove all local data, delete the app. If iCloud sync was used, data may remain in your iCloud account according to Apple's handling.</p></details>
+</div></section>
 
-        <section class="section">
-            <h2>자주 묻는 질문</h2>
-
-            <article class="faq-item">
-                <h3>BizNote는 계정이 필요한가요?</h3>
-                <p>아니요. BizNote는 별도의 계정 가입이나 로그인을 요구하지 않습니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>데이터는 어디에 저장되나요?</h3>
-                <p>노트, 명함 정보, 첨부파일, 설정은 사용자의 기기에 저장됩니다. iCloud 동기화를 켠 경우 Apple의 CloudKit 서비스를 통해 사용자의 개인 iCloud 계정에 동기화될 수 있습니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>개발자가 내 노트나 명함 정보를 볼 수 있나요?</h3>
-                <p>아니요. BizNote는 사용자 데이터를 수집하기 위한 별도 개발자 서버를 운영하지 않습니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>카메라 권한은 왜 필요한가요?</h3>
-                <p>카메라 권한은 Mac에서 명함을 촬영하고 텍스트를 인식하기 위해 사용됩니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>연락처 권한은 왜 필요한가요?</h3>
-                <p>연락처 권한은 명함 정보 저장, 연락처 중복 확인, 연락처 앱으로 정보 추가 기능에 사용됩니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>캘린더와 미리알림 권한은 왜 필요한가요?</h3>
-                <p>사용자가 선택한 경우 회의, 행사, 업무 항목을 Apple 캘린더 또는 미리알림 앱에 추가하기 위해 사용됩니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>위치 권한은 왜 필요한가요?</h3>
-                <p>회의 장소를 찾거나 현재 위치를 회의 및 행사 기록에 입력하는 기능에 사용됩니다.</p>
-            </article>
-
-            <article class="faq-item">
-                <h3>데이터를 삭제하려면 어떻게 하나요?</h3>
-                <p>앱 안에서 노트, 명함, 첨부파일, 전시회 기록, 사용자 템플릿을 삭제할 수 있습니다. 로컬 데이터를 모두 제거하려면 앱을 삭제하세요. iCloud 동기화를 사용한 경우 iCloud 데이터는 Apple의 iCloud 데이터 관리 방식에 따라 남아 있을 수 있습니다.</p>
-            </article>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 fakuku. All rights reserved.</p>
-        <p><a href="./">Marketing</a> · <a href="./privacy.html">Privacy Policy</a></p>
-    </footer>
-</body>
-</html>
+<footer class="site"><div class="wrap row">
+  <div>© 2026 FAKUKULAB · <a href="mailto:support@fakukulab.com">support@fakukulab.com</a></div>
+  <div><a href="support.html"><span lang="ko">지원</span><span lang="en">Support</span></a><a href="privacy.html"><span lang="ko">개인정보처리방침</span><span lang="en">Privacy</span></a><a href="versions.html"><span lang="ko">버전 정보</span><span lang="en">Releases</span></a></div>
+</div></footer>
+</body></html>
