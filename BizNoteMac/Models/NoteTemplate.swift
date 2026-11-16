@@ -339,4 +339,12 @@ enum TemplateCoder {
         guard let data = string.data(using: .utf8) else { return nil }
         return try? decoder.decode(type, from: data)
     }
+
+    /// Whether the stored JSON object actually contains `key` (as opposed to the
+    /// decoder filling in a default value for a missing field).
+    static func containsKey(_ key: String, in string: String) -> Bool {
+        guard let data = string.data(using: .utf8),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return false }
+        return object[key] != nil
+    }
 }

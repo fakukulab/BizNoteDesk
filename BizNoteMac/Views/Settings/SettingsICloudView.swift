@@ -279,7 +279,7 @@ struct SettingsICloudView: View {
         for note in notes where !note.isCustomCategory {
             switch note.category {
             case .workLog:
-                guard var data = TemplateCoder.decode(WorkLogTemplateData.self, from: note.templateData) else { continue }
+                guard var data = note.workLogTemplate else { continue }
                 let synced = await syncWorkLogItems(data.workItems, dueDate: data.date)
                 if synced != data.workItems {
                     data.workItems = synced
@@ -287,7 +287,7 @@ struct SettingsICloudView: View {
                     changed = true
                 }
             case .meetingMinutes:
-                guard var data = TemplateCoder.decode(MeetingMinutesTemplateData.self, from: note.templateData) else { continue }
+                guard var data = note.meetingTemplate else { continue }
                 let synced = await syncMeetingItems(data.actionItems)
                 if synced != data.actionItems {
                     data.actionItems = synced
@@ -295,7 +295,7 @@ struct SettingsICloudView: View {
                     changed = true
                 }
             case .exhibition:
-                guard var data = TemplateCoder.decode(ExhibitionTemplateData.self, from: note.templateData) else { continue }
+                guard var data = note.exhibitionTemplate else { continue }
                 let synced = await syncExhibitionItems(data.tasks)
                 if synced != data.tasks {
                     data.tasks = synced
