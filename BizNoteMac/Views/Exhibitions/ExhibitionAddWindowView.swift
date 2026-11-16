@@ -51,18 +51,18 @@ struct ExhibitionAddWindowView: View {
 
                 Section {
                     LabeledContent(String(localized: "exhibitions.introduction", defaultValue: "행사소개")) {
-                        TextEditor(text: $introduction)
-                            .frame(minHeight: 64)
-                            .padding(4)
-                            .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
+                        AutoHeightTextEditor(text: $introduction, minHeight: 40)
+                            .font(.body)
+                            .padding(8)
+                            .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
                             .scrollContentBackground(.hidden)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     LabeledContent(String(localized: "exhibitions.exhibitItems", defaultValue: "전시품목")) {
-                        TextEditor(text: $exhibitItems)
-                            .frame(minHeight: 64)
-                            .padding(4)
-                            .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
+                        AutoHeightTextEditor(text: $exhibitItems, minHeight: 40)
+                            .font(.body)
+                            .padding(8)
+                            .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
                             .scrollContentBackground(.hidden)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
