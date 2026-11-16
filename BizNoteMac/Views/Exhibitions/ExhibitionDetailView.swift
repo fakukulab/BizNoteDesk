@@ -50,7 +50,10 @@ struct ExhibitionDetailView: View {
     }
 
     private var logoImage: NSImage? {
-        AttachmentStorage.loadExhibitionLogo(path: draft.logoImagePath)
+        if draft.logoImagePath == preset.logoImagePath {
+            return AttachmentStorage.exhibitionLogo(for: preset)
+        }
+        return AttachmentStorage.loadExhibitionLogo(path: draft.logoImagePath)
     }
 
     private func beginEditing() {
@@ -85,7 +88,9 @@ struct ExhibitionDetailView: View {
               let url = panel.url,
               let image = NSImage(contentsOf: url),
               let squareImage = image.centeredSquareImage(),
-              let savedPath = AttachmentStorage.saveExhibitionLogo(squareImage, id: preset.id) else {
+              // A fresh file name per upload, so a new logo never overwrites the
+              // saved one before the user presses Save (or Cancel).
+              let savedPath = AttachmentStorage.saveExhibitionLogo(squareImage, id: UUID()) else {
             return
         }
 
@@ -121,6 +126,7 @@ struct ExhibitionDetailView: View {
         preset.logoImagePath = draft.logoImagePath
 
         if previousLogoPath != draft.logoImagePath {
+            preset.logoImageData = AttachmentStorage.exhibitionLogoData(path: draft.logoImagePath)
             AttachmentStorage.removeExhibitionLogo(path: previousLogoPath)
         }
 

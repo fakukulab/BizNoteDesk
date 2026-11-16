@@ -82,6 +82,9 @@ struct ExhibitionManagerView: View {
         }
         .onAppear {
             recalculateEndDate(for: periodFilter)
+            if AttachmentStorage.backfillExhibitionLogoData(presets) {
+                try? context.save()
+            }
         }
     }
 
@@ -281,7 +284,7 @@ struct ExhibitionManagerView: View {
     }
 
     private func logoImage(for preset: ExhibitionPreset) -> NSImage? {
-        AttachmentStorage.loadExhibitionLogo(path: preset.logoImagePath)
+        AttachmentStorage.exhibitionLogo(for: preset)
     }
 
     private func matchesSearch(_ preset: ExhibitionPreset) -> Bool {

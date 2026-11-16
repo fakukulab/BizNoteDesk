@@ -88,6 +88,36 @@ enum AttachmentStorage {
         try? FileManager.default.removeItem(atPath: path)
     }
 
+    /// The saved logo of an exhibition. The synced image data comes first
+    /// (it may have been set on another device); the local file is the fallback.
+    static func exhibitionLogo(for preset: ExhibitionPreset) -> NSImage? {
+        if let data = preset.logoImageData, let image = NSImage(data: data) {
+            return image
+        }
+        return loadExhibitionLogo(path: preset.logoImagePath)
+    }
+
+    /// Bytes of the logo file at `path`, or nil when it isn't a readable file
+    /// on this device (e.g. a path saved by the iOS app).
+    static func exhibitionLogoData(path: String) -> Data? {
+        guard !path.isEmpty else { return nil }
+        return FileManager.default.contents(atPath: path)
+    }
+
+    /// Copies logos that exist only as local files into `logoImageData`, so
+    /// logos saved before iCloud image sync existed also reach other devices.
+    @discardableResult
+    static func backfillExhibitionLogoData(_ presets: [ExhibitionPreset]) -> Bool {
+        var changed = false
+        for preset in presets where preset.logoImageData == nil {
+            if let data = exhibitionLogoData(path: preset.logoImagePath) {
+                preset.logoImageData = data
+                changed = true
+            }
+        }
+        return changed
+    }
+
     static var filesDirectory: URL? {
         let fm = FileManager.default
         if UserDefaults.standard.bool(forKey: "icloud.syncBackupEnabled"),
