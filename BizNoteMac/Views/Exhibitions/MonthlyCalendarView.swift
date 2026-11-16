@@ -9,6 +9,10 @@ struct MonthlyCalendarView: View {
 
     @Binding var displayedMonth: Date
     var onSelectEvent: ((UUID) -> Void)? = nil
+    /// Called only when the user moves the month with the arrow buttons
+    /// (not when `displayedMonth` is changed from outside), with the new month
+    /// and how many months it moved.
+    var onUserChangeMonth: ((Date, Int) -> Void)? = nil
     private let calendar = Calendar.current
 
     var body: some View {
@@ -65,6 +69,7 @@ struct MonthlyCalendarView: View {
 
     private func changeMonth(by delta: Int) {
         displayedMonth = calendar.date(byAdding: .month, value: delta, to: displayedMonth) ?? displayedMonth
+        onUserChangeMonth?(displayedMonth, delta)
     }
 
     private var weeks: [[Date?]] {

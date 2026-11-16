@@ -117,7 +117,7 @@
 		736413830219B7E3CAFDFF49 /* MeetingMinutesTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingMinutesTemplateView.swift; sourceTree = "<group>"; };
 		75EDFB52D56B8A9D878DCE8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7EA3DE1D13E2DF0C5F85DC45 /* AttachmentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentStorage.swift; sourceTree = "<group>"; };
-		8140558BAFD589CE4036DD99 /* BizNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BizNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8140558BAFD589CE4036DD99 /* BizNote Desk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BizNote Desk.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		821B1425910D9291DB76B91D /* NoteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCategory.swift; sourceTree = "<group>"; };
 		82581E3BFA7001949C9386EE /* CustomCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCategory.swift; sourceTree = "<group>"; };
 		85203768173058CCDD338704 /* ExcelExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcelExportService.swift; sourceTree = "<group>"; };
@@ -248,7 +248,7 @@
 		8AAFBD747B96103C6042C490 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8140558BAFD589CE4036DD99 /* BizNote.app */,
+				8140558BAFD589CE4036DD99 /* BizNote Desk.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -360,7 +360,7 @@
 			packageProductDependencies = (
 			);
 			productName = BizNoteMac;
-			productReference = 8140558BAFD589CE4036DD99 /* BizNote.app */;
+			productReference = 8140558BAFD589CE4036DD99 /* BizNote Desk.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -370,7 +370,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2700;
+				LastUpgradeCheck = 2720;
 				TargetAttributes = {
 					50138C21B9983E29E512CDE0 = {
 						DevelopmentTeam = 8S2Y83DCGM;
@@ -508,7 +508,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fakuku.biznote.mac;
-				PRODUCT_NAME = BizNote;
+				PRODUCT_NAME = "BizNote Desk";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -518,6 +518,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -616,7 +617,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fakuku.biznote.mac;
-				PRODUCT_NAME = BizNote;
+				PRODUCT_NAME = "BizNote Desk";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -626,6 +627,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

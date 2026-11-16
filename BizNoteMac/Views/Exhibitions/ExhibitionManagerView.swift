@@ -36,7 +36,8 @@ struct ExhibitionManagerView: View {
                             onSelectEvent: { id in
                                 guard let preset = sortedPresets.first(where: { $0.id == id }) else { return }
                                 selectedPreset = preset
-                            }
+                            },
+                            onUserChangeMonth: moveStartDate(toMonthOf:by:)
                         )
                     }
 
@@ -82,6 +83,9 @@ struct ExhibitionManagerView: View {
         }
         .onAppear {
             recalculateEndDate(for: periodFilter)
+            if AttachmentStorage.backfillExhibitionLogoData(presets) {
+                try? context.save()
+            }
         }
     }
 
@@ -281,7 +285,7 @@ struct ExhibitionManagerView: View {
     }
 
     private func logoImage(for preset: ExhibitionPreset) -> NSImage? {
-        AttachmentStorage.loadExhibitionLogo(path: preset.logoImagePath)
+        AttachmentStorage.exhibitionLogo(for: preset)
     }
 
     private func matchesSearch(_ preset: ExhibitionPreset) -> Bool {
@@ -308,6 +312,19 @@ struct ExhibitionManagerView: View {
         let endBase = Calendar.current.startOfDay(for: max(customStartDate, customEndDate))
         let end = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: endBase) ?? endBase
         return preset.startDate <= end && preset.endDate >= start
+    }
+
+    /// Moving the calendar month with the arrows moves the period start to the
+    /// 1st of that month. Fixed periods (e.g. 3 months) recompute their end via
+    /// `onChange(of: customStartDate)`; a custom period keeps its length by
+    /// moving its end by the same number of months.
+    private func moveStartDate(toMonthOf month: Date, by delta: Int) {
+        let calendar = Calendar.current
+        guard let monthStart = calendar.dateInterval(of: .month, for: month)?.start else { return }
+        if periodFilter.months == nil {
+            customEndDate = calendar.date(byAdding: .month, value: delta, to: customEndDate) ?? customEndDate
+        }
+        customStartDate = calendar.startOfDay(for: monthStart)
     }
 
     private func recalculateEndDate(for filter: ExhibitionPeriodFilter) {

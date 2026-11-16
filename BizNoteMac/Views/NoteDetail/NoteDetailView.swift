@@ -162,12 +162,12 @@ struct NoteDetailView: View {
         }
         switch note.category {
         case .workLog:
-            workLog = TemplateCoder.decode(WorkLogTemplateData.self, from: note.templateData) ?? .init()
+            workLog = note.workLogTemplate ?? .init()
             updateWorkLogTitleIfNeeded()
         case .meetingMinutes:
-            meeting = TemplateCoder.decode(MeetingMinutesTemplateData.self, from: note.templateData) ?? .init()
+            meeting = note.meetingTemplate ?? .init()
         case .exhibition:
-            exhibition = TemplateCoder.decode(ExhibitionTemplateData.self, from: note.templateData) ?? .init()
+            exhibition = note.exhibitionTemplate ?? .init()
         }
     }
 
