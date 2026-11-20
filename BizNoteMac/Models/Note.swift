@@ -13,6 +13,7 @@ final class Note {
     var updatedAt: Date = Date()
 
     var content: String = ""
+    var contentRTFData: String = ""
     var tags: [String] = []
 
     var templateData: String = "{}"

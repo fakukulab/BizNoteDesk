@@ -17,7 +17,7 @@ struct ExhibitionManagerView: View {
     @State private var customEndDate = Calendar.current.date(byAdding: .month, value: 3, to: Calendar.current.startOfDay(for: Date())) ?? Date()
     @State private var hoveredPresetID: UUID? = nil
 
-    private let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
+    private let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +26,7 @@ struct ExhibitionManagerView: View {
             Divider()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 16) {
                     if showCalendar {
                         MonthlyCalendarView(
                             events: sortedPresets.map {
@@ -41,7 +41,6 @@ struct ExhibitionManagerView: View {
                         )
                     }
 
-                    searchField
                     periodControls
 
                     if filteredPresets.isEmpty {
@@ -52,16 +51,17 @@ struct ExhibitionManagerView: View {
                         )
                         .frame(maxWidth: .infinity, minHeight: 180)
                     } else {
-                        LazyVGrid(columns: gridColumns, spacing: 10) {
+                        LazyVGrid(columns: gridColumns, spacing: 8) {
                             ForEach(filteredPresets) { preset in
                                 presetCard(preset)
                             }
                         }
                     }
                 }
-                .padding(14)
+                .padding(12)
             }
         }
+        .searchable(text: $searchText, prompt: String(localized: "search.prompt"))
         .navigationTitle(String(localized: "sidebar.exhibitions", defaultValue: "행사"))
         .confirmationDialog(
             String(localized: "exhibitions.delete.title", defaultValue: "행사를 삭제할까요?"),
@@ -94,80 +94,43 @@ struct ExhibitionManagerView: View {
             Button {
                 openWindow(id: "new-exhibition")
             } label: {
-                CircularToolbarIcon(systemName: "plus")
+                ToolbarActionIcon(systemName: "plus")
             }
-            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "exhibitions.add", defaultValue: "행사 추가"))
             .help(String(localized: "exhibitions.add", defaultValue: "행사 추가"))
+
+            Text(String(format: String(localized: "exhibitions.count", defaultValue: "%d개 표시"), filteredPresets.count))
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
 
             Spacer()
 
             Button(role: .destructive) {
                 pendingDelete = selectedPreset
             } label: {
-                CircularToolbarIcon(systemName: "trash")
+                ToolbarActionIcon(systemName: "trash")
             }
-            .buttonStyle(.plain)
             .disabled(selectedPreset == nil)
+            .accessibilityLabel(String(localized: "note.delete"))
             .help(String(localized: "note.delete"))
         }
-        .padding(.horizontal, 10)
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .overlay(alignment: .bottomLeading) {
-            Text(String(format: String(localized: "exhibitions.count", defaultValue: "%d개 표시"), filteredPresets.count))
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .padding(.leading, 12)
-                .offset(y: 14)
-        }
-        .padding(.bottom, 12)
-    }
-
-    private var searchField: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-            TextField(String(localized: "search.prompt", defaultValue: "검색"), text: $searchText)
-                .textFieldStyle(.plain)
-            if !searchText.isEmpty {
-                Button {
-                    searchText = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var periodControls: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(String(localized: "export.periodLabel", defaultValue: "기간"))
-                .font(.callout.weight(.semibold))
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack(spacing: 8) {
-                ForEach(ExhibitionPeriodFilter.predefined) { filter in
-                    Button {
-                        periodFilter = filter
-                        recalculateEndDate(for: filter)
-                    } label: {
-                        Text(filter.localizedName)
-                            .font(.callout.weight(.semibold))
-                            .frame(maxWidth: .infinity, minHeight: 34)
-                            .foregroundStyle(periodFilter == filter ? Color.black : Color.white)
-                            .background(periodFilter == filter ? Color.white : Color.secondary.opacity(0.22), in: RoundedRectangle(cornerRadius: 7))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 7)
-                                    .stroke(Color.white.opacity(periodFilter == filter ? 1.0 : 0.75), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    .help(filter.localizedName)
+        VStack(alignment: .leading, spacing: 8) {
+            Picker(String(localized: "export.periodLabel", defaultValue: "기간"), selection: $periodFilter) {
+                ForEach(ExhibitionPeriodFilter.allCases) { filter in
+                    Text(filter.localizedName).tag(filter)
                 }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .onChange(of: periodFilter) { _, filter in
+                recalculateEndDate(for: filter)
             }
 
             HStack(spacing: 8) {
@@ -191,7 +154,7 @@ struct ExhibitionManagerView: View {
             }
         }
         .padding(12)
-        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+        .macGroupSurface()
         .onChange(of: customStartDate) { _, newValue in
             customStartDate = Calendar.current.startOfDay(for: newValue)
             if let months = periodFilter.months {
@@ -260,10 +223,10 @@ struct ExhibitionManagerView: View {
             .frame(maxWidth: .infinity)
             .aspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 8))
-            .background(selectedPreset?.id == preset.id ? Color.accentColor.opacity(0.16) : Color.secondary.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
+            .background(selectedPreset?.id == preset.id ? Color.accentColor.opacity(0.16) : Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(selectedPreset?.id == preset.id ? Color.accentColor.opacity(0.65) : Color.secondary.opacity(0.18), lineWidth: 1)
+                    .stroke(selectedPreset?.id == preset.id ? Color.accentColor.opacity(0.65) : Color(nsColor: .separatorColor), lineWidth: 1)
             )
             .contentShape(RoundedRectangle(cornerRadius: 8))
         }
@@ -338,7 +301,7 @@ struct ExhibitionManagerView: View {
 
     private func updatePeriodSelectionForManualEndDate() {
         let normalizedEnd = Calendar.current.startOfDay(for: customEndDate)
-        if let matchingFilter = ExhibitionPeriodFilter.predefined.first(where: { filter in
+        if let matchingFilter = ExhibitionPeriodFilter.allCases.first(where: { filter in
             guard let months = filter.months else { return false }
             return Calendar.current.isDate(normalizedEnd, inSameDayAs: endDate(from: customStartDate, addingMonths: months))
         }) {
@@ -359,18 +322,12 @@ private struct ExhibitionDateField: View {
         Button {
             isPresented = true
         } label: {
-            HStack(spacing: 6) {
-                Image(systemName: "calendar")
-                Text(formattedDate)
-                    .font(.callout.monospacedDigit())
-                    .lineLimit(1)
-            }
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity, minHeight: 34)
-            .padding(.horizontal, 10)
-            .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 7))
+            Label(formattedDate, systemImage: "calendar")
+                .monospacedDigit()
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.bordered)
         .popover(isPresented: $isPresented) {
             DatePicker("", selection: Binding(
                 get: { date },
@@ -400,8 +357,6 @@ private enum ExhibitionPeriodFilter: String, CaseIterable, Identifiable {
     case sixMonths
     case oneYear
     case custom
-
-    static let predefined: [ExhibitionPeriodFilter] = [.oneMonth, .threeMonths, .sixMonths, .oneYear]
 
     var id: String { rawValue }
 

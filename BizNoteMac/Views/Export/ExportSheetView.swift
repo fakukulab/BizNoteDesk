@@ -35,69 +35,61 @@ struct ExportSheetView: View {
             Text(String(localized: "export.title"))
                 .font(.title2.weight(.semibold))
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "export.targetLabel", defaultValue: "대상"))
-                    .font(.callout.weight(.semibold))
-                Picker("", selection: $kind) {
-                    ForEach(Kind.allCases) { k in
-                        Text(k.localized).tag(k)
-                    }
-                }
-                .labelsHidden()
-                .pickerStyle(.segmented)
-            }
-
-            if kind != .businessCards {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "export.noteListLabel", defaultValue: "노트목록"))
-                        .font(.callout.weight(.semibold))
-                    Picker("", selection: $categoryFilter) {
-                        Text(String(localized: "export.category.all")).tag(NoteCategorySelection?.none)
-                        ForEach(NoteCategory.allCases) { c in
-                            Text(c.localizedName).tag(NoteCategorySelection?.some(.builtin(c)))
-                        }
-                        ForEach(customCategories) { c in
-                            Text(c.name).tag(NoteCategorySelection?.some(.custom(c)))
+            GroupBox {
+                VStack(alignment: .leading, spacing: 12) {
+                    Picker(String(localized: "export.targetLabel", defaultValue: "대상"), selection: $kind) {
+                        ForEach(Kind.allCases) { kind in
+                            Text(kind.localized).tag(kind)
                         }
                     }
-                    .labelsHidden()
-                }
-            }
-
-            if kind != .notes {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "export.cardFormat", defaultValue: "명함 파일 형식"))
-                        .font(.callout.weight(.semibold))
-                    Picker("", selection: $cardFormatRaw) {
-                        ForEach(SpreadsheetFormat.allCases) { f in
-                            Text(f.localizedName).tag(f.rawValue)
-                        }
-                    }
-                    .labelsHidden()
                     .pickerStyle(.segmented)
+
+                    if kind != .businessCards {
+                        Picker(String(localized: "export.noteListLabel", defaultValue: "노트목록"), selection: $categoryFilter) {
+                            Text(String(localized: "export.category.all")).tag(NoteCategorySelection?.none)
+                            ForEach(NoteCategory.allCases) { category in
+                                Text(category.localizedName).tag(NoteCategorySelection?.some(.builtin(category)))
+                            }
+                            ForEach(customCategories) { category in
+                                Text(category.name).tag(NoteCategorySelection?.some(.custom(category)))
+                            }
+                        }
+                    }
+
+                    if kind != .notes {
+                        Picker(String(localized: "export.cardFormat", defaultValue: "명함 파일 형식"), selection: $cardFormatRaw) {
+                            ForEach(SpreadsheetFormat.allCases) { format in
+                                Text(format.localizedName).tag(format.rawValue)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(4)
             }
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "export.periodLabel", defaultValue: "기간"))
-                    .font(.callout.weight(.semibold))
-                HStack {
+            GroupBox(String(localized: "export.periodLabel", defaultValue: "기간")) {
+                HStack(spacing: 16) {
                     DatePicker(String(localized: "export.startDate"),
                                selection: $startDate, displayedComponents: .date)
                     DatePicker(String(localized: "export.endDate"),
                                selection: $endDate, displayedComponents: .date)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(4)
             }
 
             Toggle(String(localized: "export.openAfterSave"), isOn: $openAfterSave)
-                .toggleStyle(.switch)
+                .toggleStyle(.checkbox)
 
             HStack {
                 Text(String(localized: "export.count") + ": \(filteredCount)")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                 Spacer()
-                Button(String(localized: "action.cancel")) { dismiss() }
+                Button(String(localized: "action.cancel"), role: .cancel) { dismiss() }
+                    .keyboardShortcut(.cancelAction)
                 Button(String(localized: "export.run")) {
                     performExport()
                     dismiss()

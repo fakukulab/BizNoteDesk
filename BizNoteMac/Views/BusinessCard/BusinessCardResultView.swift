@@ -45,14 +45,14 @@ struct BusinessCardResultView: View {
                     LabeledContent(String(localized: "card.field.memo")) {
                         TextEditor(text: $draft.memo)
                             .frame(minHeight: 60)
-                            .padding(4)
-                            .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
-                            .scrollContentBackground(.hidden)
+                            .macEditorField()
                     }
                 }
                 duplicateSection
             }
             .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .multilineTextAlignment(.leading)
 
             HStack {
                 Button(String(localized: "action.cancel"), action: onCancel)

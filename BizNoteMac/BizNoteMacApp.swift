@@ -35,6 +35,7 @@ struct BizNoteMacApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .background(Color(nsColor: .windowBackgroundColor))
                 .preferredColorScheme(colorScheme)
         }
         .modelContainer(container)
@@ -44,6 +45,7 @@ struct BizNoteMacApp: App {
         WindowGroup(String(localized: "exhibitions.add", defaultValue: "행사 추가"), id: "new-exhibition") {
             ExhibitionAddWindowView()
                 .modelContainer(container)
+                .background(Color(nsColor: .windowBackgroundColor))
                 .preferredColorScheme(colorScheme)
         }
         .defaultSize(width: 620, height: 680)
@@ -51,8 +53,9 @@ struct BizNoteMacApp: App {
         Settings {
             SettingsView()
                 .modelContainer(container)
-                .preferredColorScheme(colorScheme)
                 .frame(width: 560, height: 460)
+                .background(Color(nsColor: .windowBackgroundColor))
+                .preferredColorScheme(colorScheme)
         }
     }
 

@@ -20,9 +20,7 @@ final class ExhibitionPreset {
     /// device that saved it, so the bytes are stored here to sync via iCloud
     /// (CloudKit) to the other app/devices. Must match the iOS model.
     @Attribute(.externalStorage) var logoImageData: Data? = nil
-    /// Base64 RTF (formatting) of `introduction` / `exhibitItems`, written by the
-    /// iOS app's rich text editor. The Mac app edits plain text only, so it
-    /// clears these whenever it changes the matching text. Must match the iOS model.
+    /// Base64 RTF for the introduction and exhibit items, shared with the iOS model.
     var introductionRTFData: String = ""
     var exhibitItemsRTFData: String = ""
     var createdAt: Date = Date()

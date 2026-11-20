@@ -77,6 +77,7 @@ struct NoteListView: View {
                             }
                     }
                     .listStyle(.inset)
+                    .scrollContentBackground(.hidden)
                 } else {
                     List(filteredNotes, id: \.id, selection: $selectedNote) { note in
                         noteRow(note)
@@ -86,6 +87,7 @@ struct NoteListView: View {
                             }
                     }
                     .listStyle(.inset)
+                    .scrollContentBackground(.hidden)
                 }
             }
         }
@@ -140,9 +142,9 @@ struct NoteListView: View {
                     }
                 }
             } label: {
-                CircularToolbarIcon(systemName: sort.systemImage)
+                ToolbarActionIcon(systemName: sort.systemImage)
             }
-            .menuStyle(.borderlessButton)
+            .accessibilityLabel(String(localized: "sort.menu"))
             .help(String(localized: "sort.menu"))
 
             Button {
@@ -151,12 +153,12 @@ struct NoteListView: View {
                     selectedNoteIDs.removeAll()
                 }
             } label: {
-                CircularToolbarIcon(
+                ToolbarActionIcon(
                     systemName: isSelectionMode ? "checkmark.circle.fill" : "checkmark.circle",
                     isActive: isSelectionMode
                 )
             }
-            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "noteList.selection.toggle", defaultValue: "노트 선택"))
             .help(String(localized: "noteList.selection.toggle", defaultValue: "노트 선택"))
 
             Text(toolbarStatusText)
@@ -171,31 +173,32 @@ struct NoteListView: View {
                     pendingDeleteNotes = actionNotes
                 }
             } label: {
-                CircularToolbarIcon(systemName: "trash")
+                ToolbarActionIcon(systemName: "trash")
             }
-            .buttonStyle(.plain)
             .disabled(actionNotes.isEmpty)
+            .accessibilityLabel(String(localized: "note.delete"))
             .help(String(localized: "note.delete"))
 
             Button {
                 exportActionNotes()
             } label: {
-                CircularToolbarIcon(systemName: "square.and.arrow.up")
+                ToolbarActionIcon(systemName: "square.and.arrow.up")
             }
-            .buttonStyle(.plain)
             .disabled(actionNotes.isEmpty)
+            .accessibilityLabel(String(localized: "action.export", defaultValue: "내보내기"))
             .help(String(localized: "action.export", defaultValue: "내보내기"))
 
             Button(action: createNoteButtonTapped) {
-                CircularToolbarIcon(systemName: "square.and.pencil")
+                ToolbarActionIcon(systemName: "square.and.pencil")
             }
-            .buttonStyle(.plain)
             .keyboardShortcut("n", modifiers: .command)
+            .accessibilityLabel(String(localized: "note.new.title", defaultValue: "새 노트 추가"))
             .help("⌘N")
         }
-        .padding(.horizontal, 10)
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
-
     }
 
     private var toolbarStatusText: String {
@@ -329,9 +332,14 @@ struct NoteListView: View {
     private func duplicate(_ note: Note) {
         let copy = Note(title: note.title + " (copy)", category: note.category, content: note.content)
         copy.tags = note.tags
+        copy.contentRTFData = note.contentRTFData
         copy.templateData = note.templateData
         copy.customCategory = note.customCategory
         copy.categoryRaw = note.categoryRaw
+        if copy.categoryRaw == NoteCategory.workLog.rawValue, var data = copy.workLogTemplate {
+            data.majorEvents = data.majorEvents.map { .init(title: $0.title) }
+            copy.templateData = TemplateCoder.encode(data)
+        }
         context.insert(copy)
         try? context.save()
         selectedNote = copy
@@ -346,6 +354,10 @@ struct NoteListView: View {
         for note in notes {
             if selectedNote?.id == note.id {
                 selectedNote = nil
+            }
+            if note.categoryRaw == NoteCategory.workLog.rawValue, let data = note.workLogTemplate {
+                let noteID = note.id
+                Task { await CalendarReminderSyncService.shared.removeWorkLogEvents(noteID: noteID, data: data) }
             }
             context.delete(note)
         }

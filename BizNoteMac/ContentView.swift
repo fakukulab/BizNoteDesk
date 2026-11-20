@@ -59,7 +59,7 @@ struct ContentView: View {
             } else if let note = selectedNote {
                 Group {
                     if showsCardPanel(note) {
-                        NoteDetailView(note: note)
+                        NoteDetailView(note: note, onOpenMeeting: openMeeting)
                             .inspector(isPresented: $showCardInspector) {
                                 BusinessCardPanelView(note: note)
                                     .inspectorColumnWidth(min: 300, ideal: 360, max: 460)
@@ -76,7 +76,7 @@ struct ContentView: View {
                                 }
                             }
                     } else {
-                        NoteDetailView(note: note)
+                        NoteDetailView(note: note, onOpenMeeting: openMeeting)
                     }
                 }
                 .id(note.id)
@@ -141,7 +141,29 @@ struct ContentView: View {
         insertAndSelect(note)
     }
 
+    private func openMeeting(_ note: Note) {
+        searchText = ""
+        selectedCategory = .builtin(.meetingMinutes)
+        selectedNote = note
+    }
+
+    private func latestWorkLog() -> WorkLogTemplateData? {
+        let category = NoteCategory.workLog.rawValue
+        var query = FetchDescriptor<Note>(
+            predicate: #Predicate { $0.categoryRaw == category },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        query.fetchLimit = 1
+        return (try? context.fetch(query))?.first?.workLogTemplate
+    }
+
     private func insertAndSelect(_ note: Note) {
+        if !note.isCustomCategory, note.category == .workLog,
+           var next = note.workLogTemplate,
+           let previous = latestWorkLog() {
+            next.workItems.append(contentsOf: previous.tasksForNextEntry())
+            note.templateData = TemplateCoder.encode(next)
+        }
         context.insert(note)
         try? context.save()
         selectedNote = note

@@ -23,7 +23,6 @@ struct SettingsView: View {
                 .tabItem { Label(String(localized: "settings.about"), systemImage: "info.circle") }
                 .tag(Tab.about)
         }
-        .padding(20)
     }
 }
 
@@ -40,6 +39,7 @@ struct SettingsGeneralView: View {
             .pickerStyle(.segmented)
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
     }
 }
 

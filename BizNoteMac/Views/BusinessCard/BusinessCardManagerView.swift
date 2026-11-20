@@ -77,11 +77,13 @@ struct BusinessCardManagerView: View {
                         cardRow(card).tag(card.id)
                     }
                     .listStyle(.inset)
+                    .scrollContentBackground(.hidden)
                 } else {
                     List(visibleCards, id: \.id, selection: $selectedCard) { card in
                         cardRow(card).tag(card)
                     }
                     .listStyle(.inset)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -114,9 +116,9 @@ struct BusinessCardManagerView: View {
                     }
                 }
             } label: {
-                CircularToolbarIcon(systemName: "line.3.horizontal.decrease.circle")
+                ToolbarActionIcon(systemName: "line.3.horizontal.decrease.circle")
             }
-            .menuStyle(.borderlessButton)
+            .accessibilityLabel(String(localized: "cardManager.filter.noteType", defaultValue: "노트종류 필터"))
             .help(String(localized: "cardManager.filter.noteType", defaultValue: "노트종류 필터"))
 
             Menu {
@@ -128,9 +130,9 @@ struct BusinessCardManagerView: View {
                     }
                 }
             } label: {
-                CircularToolbarIcon(systemName: dateSort.systemImage)
+                ToolbarActionIcon(systemName: dateSort.systemImage)
             }
-            .menuStyle(.borderlessButton)
+            .accessibilityLabel(String(localized: "cardManager.sort.date", defaultValue: "일자 정렬"))
             .help(String(localized: "cardManager.sort.date", defaultValue: "일자 정렬"))
 
             Button {
@@ -139,12 +141,12 @@ struct BusinessCardManagerView: View {
                     selectedCardIDs.removeAll()
                 }
             } label: {
-                CircularToolbarIcon(
+                ToolbarActionIcon(
                     systemName: isSelectionMode ? "checkmark.circle.fill" : "checkmark.circle",
                     isActive: isSelectionMode
                 )
             }
-            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "cardManager.selection.toggle", defaultValue: "명함 선택"))
             .help(String(localized: "cardManager.selection.toggle", defaultValue: "명함 선택"))
 
             Text(toolbarStatusText)
@@ -157,24 +159,25 @@ struct BusinessCardManagerView: View {
             Button(role: .destructive) {
                 showDeleteConfirmation = !actionCards.isEmpty
             } label: {
-                CircularToolbarIcon(systemName: "trash")
+                ToolbarActionIcon(systemName: "trash")
             }
-            .buttonStyle(.plain)
             .disabled(actionCards.isEmpty)
+            .accessibilityLabel(String(localized: "action.delete", defaultValue: "삭제"))
             .help(String(localized: "action.delete", defaultValue: "삭제"))
 
             Button {
                 exportActionCards()
             } label: {
-                CircularToolbarIcon(systemName: "square.and.arrow.up")
+                ToolbarActionIcon(systemName: "square.and.arrow.up")
             }
-            .buttonStyle(.plain)
             .disabled(actionCards.isEmpty)
+            .accessibilityLabel(String(localized: "action.export", defaultValue: "내보내기"))
             .help(String(localized: "action.export", defaultValue: "내보내기"))
         }
-        .padding(.horizontal, 10)
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
-
     }
 
     private var availableNoteTypeFilters: [CardNoteTypeFilter] {

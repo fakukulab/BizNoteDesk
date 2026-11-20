@@ -20,7 +20,62 @@ struct SettingsICloudView: View {
     @State private var reminderLists: [CalendarReminderSyncService.Destination] = []
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        ScrollView {
+            settingsContent
+        }
+        .confirmationDialog(
+            String(localized: "settings.iCloud.deleteAll.confirm.title", defaultValue: "iCloud 데이터를 모두 삭제할까요?"),
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "settings.iCloud.deleteAll.confirm.action", defaultValue: "삭제"), role: .destructive) {
+                showDeleteFinalConfirmation = true
+            }
+            Button(String(localized: "action.cancel"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "settings.iCloud.deleteAll.confirm.message",
+                        defaultValue: "모든 노트, 명함, 전시회 정보가 이 기기와 iCloud에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다."))
+        }
+        .alert(
+            String(localized: "settings.iCloud.deleteAll.final.title", defaultValue: "정말 삭제하시겠습니까?"),
+            isPresented: $showDeleteFinalConfirmation
+        ) {
+            Button(String(localized: "settings.iCloud.deleteAll.confirm.action", defaultValue: "삭제"), role: .destructive) {
+                deleteAllData()
+            }
+            Button(String(localized: "action.cancel"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "settings.iCloud.deleteAll.final.message", defaultValue: "삭제 후에는 복구할 수 없습니다."))
+        }
+        .task {
+            await refreshDestinations(requestAccess: false)
+        }
+        .onChange(of: syncEventsWithCalendar) { _, enabled in
+            guard enabled else { return }
+            Task {
+                await refreshEventCalendars(requestAccess: true)
+                await syncExistingEvents()
+            }
+        }
+        .onChange(of: syncTasksWithReminders) { _, enabled in
+            guard enabled else { return }
+            Task {
+                await refreshReminderLists(requestAccess: true)
+                await syncExistingTasks()
+            }
+        }
+        .onChange(of: selectedEventCalendarIdentifier) { _, _ in
+            guard syncEventsWithCalendar else { return }
+            Task { await syncExistingEvents() }
+        }
+        .onChange(of: selectedReminderListIdentifier) { _, _ in
+            guard syncTasksWithReminders else { return }
+            Task { await syncExistingTasks() }
+        }
+    }
+
+    private var settingsContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
             GroupBox(String(localized: "settings.iCloud.sync", defaultValue: "iCloud 동기화")) {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -112,7 +167,7 @@ struct SettingsICloudView: View {
             }
 
             GroupBox {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 8) {
                     Button(role: .destructive) {
                         showDeleteConfirmation = true
                     } label: {
@@ -160,59 +215,8 @@ struct SettingsICloudView: View {
                         defaultValue: "동기화 설정 변경 사항은 앱을 재시작하면 적용됩니다."))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-
-            Spacer()
         }
-        .padding(4)
-        .confirmationDialog(
-            String(localized: "settings.iCloud.deleteAll.confirm.title", defaultValue: "iCloud 데이터를 모두 삭제할까요?"),
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "settings.iCloud.deleteAll.confirm.action", defaultValue: "삭제"), role: .destructive) {
-                showDeleteFinalConfirmation = true
-            }
-            Button(String(localized: "action.cancel"), role: .cancel) {}
-        } message: {
-            Text(String(localized: "settings.iCloud.deleteAll.confirm.message",
-                        defaultValue: "모든 노트, 명함, 전시회 정보가 이 기기와 iCloud에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다."))
-        }
-        .alert(
-            String(localized: "settings.iCloud.deleteAll.final.title", defaultValue: "정말 삭제하시겠습니까?"),
-            isPresented: $showDeleteFinalConfirmation
-        ) {
-            Button(String(localized: "settings.iCloud.deleteAll.confirm.action", defaultValue: "삭제"), role: .destructive) {
-                deleteAllData()
-            }
-            Button(String(localized: "action.cancel"), role: .cancel) {}
-        } message: {
-            Text(String(localized: "settings.iCloud.deleteAll.final.message", defaultValue: "삭제 후에는 복구할 수 없습니다."))
-        }
-        .task {
-            await refreshDestinations(requestAccess: false)
-        }
-        .onChange(of: syncEventsWithCalendar) { _, enabled in
-            guard enabled else { return }
-            Task {
-                await refreshEventCalendars(requestAccess: true)
-                await syncExistingEvents()
-            }
-        }
-        .onChange(of: syncTasksWithReminders) { _, enabled in
-            guard enabled else { return }
-            Task {
-                await refreshReminderLists(requestAccess: true)
-                await syncExistingTasks()
-            }
-        }
-        .onChange(of: selectedEventCalendarIdentifier) { _, _ in
-            guard syncEventsWithCalendar else { return }
-            Task { await syncExistingEvents() }
-        }
-        .onChange(of: selectedReminderListIdentifier) { _, _ in
-            guard syncTasksWithReminders else { return }
-            Task { await syncExistingTasks() }
-        }
+        .padding(20)
     }
 
     private var iconColor: Color {
@@ -269,6 +273,9 @@ struct SettingsICloudView: View {
     private func syncExistingEvents() async {
         for preset in exhibitionPresets {
             await CalendarReminderSyncService.shared.syncEvent(for: preset)
+        }
+        for note in notes where note.categoryRaw == NoteCategory.workLog.rawValue {
+            await CalendarReminderSyncService.shared.syncWorkLogEvents(for: note)
         }
         try? context.save()
     }

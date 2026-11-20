@@ -39,10 +39,9 @@ Distribution/ExportOptions-DeveloperID.plist
 
 See `Distribution/DirectDistribution.md` for the archive, export, notarization, and Gatekeeper validation workflow.
 
-## Website
+## Website and help
 
-GitHub Pages files are kept in this repository for App Store Connect metadata:
-
-- Marketing URL: `https://fakukulab.github.io/BizNoteDesk/`
-- Support URL: `https://fakukulab.github.io/BizNoteDesk/support.html`
-- Privacy Policy URL: `https://fakukulab.github.io/BizNoteDesk/privacy.html`
+- [BizNote Desk website](https://biznote-desk.fakukulab.com/)
+- [Release notes](https://biznote-desk.fakukulab.com/versions.html)
+- [Help and FAQ](https://biznote-desk.fakukulab.com/support.html)
+- [Privacy policy](https://biznote-desk.fakukulab.com/privacy.html)

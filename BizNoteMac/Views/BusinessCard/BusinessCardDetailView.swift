@@ -58,9 +58,7 @@ struct BusinessCardDetailView: View {
                         LabeledContent(String(localized: "card.field.memo")) {
                             TextEditor(text: $card.memo)
                                 .frame(minHeight: 60)
-                                .padding(4)
-                                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
-                                .scrollContentBackground(.hidden)
+                                .macEditorField()
                         }
                     }
                     if let note = card.note {
@@ -73,6 +71,8 @@ struct BusinessCardDetailView: View {
                     }
                 }
                 .formStyle(.grouped)
+                .scrollContentBackground(.hidden)
+                .multilineTextAlignment(.leading)
             }
             .padding(24)
         }

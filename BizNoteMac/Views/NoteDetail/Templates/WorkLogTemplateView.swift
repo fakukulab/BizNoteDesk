@@ -4,22 +4,48 @@ import AppKit
 struct WorkLogTemplateView: View {
     @Binding var data: WorkLogTemplateData
     @Binding var attachmentPaths: [String]
+    @AppStorage("integration.syncEventsWithCalendar") private var syncEventsWithCalendar = false
+    var meetings: [Note] = []
+    var onOpenMeeting: (Note) -> Void = { _ in }
+
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "template.workLog.items", defaultValue: "업무"))
-                    .font(.callout.weight(.semibold))
-                HStack(alignment: .top, spacing: 12) {
-                    workItemColumn(for: .todo)
-                    workItemColumn(for: .inProgress)
-                    workItemColumn(for: .done)
+        VStack(alignment: .leading, spacing: 16) {
+            majorEventsSection
+            if !meetings.isEmpty {
+                NoteTemplateSection(title: String(localized: "workLog.relatedMeetings", defaultValue: "같은 날 회의록")) {
+                    ForEach(meetings) { meeting in
+                        Button {
+                            onOpenMeeting(meeting)
+                        } label: {
+                            Label(meeting.title.isEmpty ? String(localized: "note.untitled") : meeting.title,
+                                  systemImage: "arrow.right.circle")
+                        }
+                        .buttonStyle(.borderless)
+                    }
                 }
-                .padding(6)
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
             }
 
-            labeledEditor(String(localized: "template.workLog.achievements"), text: $data.achievements)
+            NoteTemplateSection(title: String(localized: "template.workLog.items", defaultValue: "업무")) {
+                let statuses = WorkLogTemplateData.WorkItem.TaskStatus.allCases
+                NoteTaskBoard(statuses: statuses, title: { $0.localizedName }) { status in
+                    ForEach($data.workItems) { $item in
+                        if item.status == status {
+                            workItemRow($item)
+                            Divider()
+                        }
+                    }
+                    Button {
+                        data.workItems.append(.init(status: status))
+                    } label: {
+                        Label(String(localized: "template.workLog.item.add"), systemImage: "plus")
+                    }
+                    .buttonStyle(.borderless)
+                    .font(.caption)
+                }
+            }
+
+            labeledEditor(String(localized: "task.status.done"), text: $data.achievements)
             labeledEditor(String(localized: "template.workLog.issues"), text: $data.issues)
             labeledEditor(String(localized: "template.workLog.nextTodos"), text: $data.nextTodos)
 
@@ -27,35 +53,48 @@ struct WorkLogTemplateView: View {
         }
     }
 
-    @ViewBuilder
-    private func workItemColumn(for status: WorkLogTemplateData.WorkItem.TaskStatus) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(status.localizedName)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            VStack(spacing: 6) {
-                ForEach($data.workItems) { $item in
-                    if item.status == status {
-                        workItemRow($item)
+    private var majorEventsSection: some View {
+        NoteTemplateSection(title: String(localized: "workLog.majorEvents", defaultValue: "주요 행사")) {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach($data.majorEvents) { $event in
+                    let id = event.id
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundStyle(.secondary)
+                        TextField(String(localized: "exhibitions.name", defaultValue: "행사명"), text: $event.title)
+                            .textFieldStyle(.plain)
+                        Button(role: .destructive) {
+                            data.majorEvents.removeAll { $0.id == id }
+                        } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(String(localized: "action.delete", defaultValue: "삭제"))
                     }
+                    Divider()
+                }
+                Button {
+                    data.majorEvents.append(.init())
+                } label: {
+                    Label(String(localized: "exhibitions.add", defaultValue: "행사 추가"), systemImage: "plus")
+                }
+                .buttonStyle(.borderless)
+
+                if !syncEventsWithCalendar && !data.majorEvents.isEmpty {
+                    SettingsLink {
+                        Label(String(localized: "workLog.calendarSettings", defaultValue: "캘린더 연동 설정"),
+                              systemImage: "gear")
+                    }
+                    .buttonStyle(.borderless)
+                    .font(.caption)
                 }
             }
-            Button {
-                data.workItems.append(.init(status: status))
-            } label: {
-                Label(String(localized: "template.workLog.item.add"), systemImage: "plus")
-            }
-            .buttonStyle(.borderless)
-            .font(.caption)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(8)
-        .background(Color.secondary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
     }
 
     @ViewBuilder
     private func workItemRow(_ item: Binding<WorkLogTemplateData.WorkItem>) -> some View {
-        HStack(alignment: .top, spacing: 6) {
+        HStack(alignment: .top, spacing: 4) {
             Menu {
                 ForEach(WorkLogTemplateData.WorkItem.TaskStatus.allCases, id: \.self) { s in
                     Button(s.localizedName) { updateStatus(item, to: s) }
@@ -68,9 +107,7 @@ struct WorkLogTemplateView: View {
 
             AutoHeightTextEditor(text: item.task, minHeight: 20)
                 .font(.caption)
-                .padding(4)
-                .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 4))
-                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+                .scrollContentBackground(.hidden)
                 .onChange(of: item.wrappedValue.task) { _, _ in
                     syncAchievementIfNeeded(item)
                 }
@@ -80,8 +117,7 @@ struct WorkLogTemplateView: View {
             } label: { Image(systemName: "minus.circle") }
             .buttonStyle(.plain)
         }
-        .padding(6)
-        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+        .padding(.vertical, 4)
     }
 
     private func updateStatus(
@@ -116,18 +152,15 @@ struct WorkLogTemplateView: View {
 
     @ViewBuilder
     private func labeledEditor(_ title: String, text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.callout.weight(.semibold))
+        NoteTemplateSection(title: title) {
             TextEditor(text: text)
                 .frame(minHeight: 60)
-                .padding(6)
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
                 .scrollContentBackground(.hidden)
         }
     }
 
     private var attachmentsSection: some View {
-        GroupBox(String(localized: "template.workLog.attachments", defaultValue: "첨부파일")) {
+        NoteTemplateSection(title: String(localized: "template.workLog.attachments", defaultValue: "첨부파일")) {
             VStack(alignment: .leading, spacing: 6) {
                 ForEach(attachmentPaths, id: \.self) { path in
                     HStack {
@@ -150,8 +183,8 @@ struct WorkLogTemplateView: View {
                         } label: { Image(systemName: "minus.circle") }
                         .buttonStyle(.plain)
                     }
-                    .padding(6)
-                    .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+                    .padding(.vertical, 4)
+                    Divider()
                 }
                 Button {
                     addAttachment()

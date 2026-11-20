@@ -12,6 +12,7 @@
 		1A3AAB2A85EF5D95192F01F9 /* NSImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39BB408A6458B5E09022466 /* NSImage+Extensions.swift */; };
 		1C0B382164C8031ADACBF31B /* SettingsICloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A23A16BF16D33E6C655E03F /* SettingsICloudView.swift */; };
 		2E5A3DE0D8EF438361B92A65 /* WorkLogTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189CC5AF32378A99BAB9955 /* WorkLogTemplateView.swift */; };
+		04AD47FADFC8428C8B863369 /* NoteTemplateLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C75439449149A5A36346FB /* NoteTemplateLayout.swift */; };
 		33CD17A2E115862F587B6076 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB08E75B66C9E29D5A221829 /* Assets.xcassets */; };
 		373CEFBA19B6AA1AE669D634 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D32C1F568DBD1BB404CF8A /* EmptyStateView.swift */; };
 		3F8CB95F5B47F472B21AB208 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 413BEBE05BF6595110236438 /* SidebarView.swift */; };
@@ -22,14 +23,14 @@
 		5577F13530408B0200F4E0AD /* BusinessCardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F13430408B0200F4E0AD /* BusinessCardDetailView.swift */; };
 		5577F1373041C76D00F4E0AD /* MonthlyCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F1363041C76D00F4E0AD /* MonthlyCalendarView.swift */; };
 		5577F1393041C78800F4E0AD /* ExhibitionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F1383041C78800F4E0AD /* ExhibitionDetailView.swift */; };
-		5577F13B3041C7EB00F4E0AD /* CircleCheckToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F13A3041C7EB00F4E0AD /* CircleCheckToggleStyle.swift */; };
+		5577F13B3041C7EB00F4E0AD /* MacControlSurfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F13A3041C7EB00F4E0AD /* MacControlSurfaces.swift */; };
 		5577F13F3041F0EE00F4E0AD /* CalendarReminderSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F13E3041F0EE00F4E0AD /* CalendarReminderSyncService.swift */; };
 		5577F14130426D6000F4E0AD /* BusinessCardOCRReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14030426D6000F4E0AD /* BusinessCardOCRReview.swift */; };
 		5577F14330426DDC00F4E0AD /* BusinessCardDuplicateDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14230426DDC00F4E0AD /* BusinessCardDuplicateDetector.swift */; };
 		5577F1453043252400F4E0AD /* BusinessCardCameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F1443043252400F4E0AD /* BusinessCardCameraController.swift */; };
 		5577F1473043253E00F4E0AD /* BusinessCardCameraCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F1463043253E00F4E0AD /* BusinessCardCameraCaptureView.swift */; };
 		5577F14930433BDF00F4E0AD /* ExhibitionAddWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14830433BDF00F4E0AD /* ExhibitionAddWindowView.swift */; };
-		5577F14B304411FF00F4E0AD /* CircularToolbarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14A304411FF00F4E0AD /* CircularToolbarIcon.swift */; };
+		5577F14B304411FF00F4E0AD /* ToolbarActionIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14A304411FF00F4E0AD /* ToolbarActionIcon.swift */; };
 		5577F14D3044185B00F4E0AD /* NewNoteTemplateSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14C3044185B00F4E0AD /* NewNoteTemplateSheetView.swift */; };
 		5577F14F30441FB300F4E0AD /* CustomNoteTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F14E30441FB300F4E0AD /* CustomNoteTemplate.swift */; };
 		5577F1513044202F00F4E0AD /* CustomNoteTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5577F1503044202F00F4E0AD /* CustomNoteTemplateView.swift */; };
@@ -61,6 +62,7 @@
 		D367230C18B3B5A58BDA19F6 /* ExcelExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85203768173058CCDD338704 /* ExcelExportService.swift */; };
 		D6AC7E255E557A2451B88581 /* BizNoteMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3920DDAEE200F05F4775AD /* BizNoteMacApp.swift */; };
 		E5033AC89452E0E3F26BDCA1 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A94D07692DA8ED15F65ECA /* NoteDetailView.swift */; };
+		4646295504AF404FAB05461F /* NoteMemoEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840F13AE2C6D433AAF56BFB2 /* NoteMemoEditor.swift */; };
 		EC10F2B9AF641D170EC8A7FA /* ExhibitionTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE245297787C315F41BA88D7 /* ExhibitionTemplateView.swift */; };
 		F07BB50B71E1826163732A6A /* BusinessCardParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE337CAAF85829BD9AB43B51 /* BusinessCardParser.swift */; };
 		FE21A195D3F98BE383599135 /* TagEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF97553C7931C46F44524E7 /* TagEditorView.swift */; };
@@ -74,6 +76,7 @@
 		0EF60E6FA85B7CAA319E905F /* NoteTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTemplate.swift; sourceTree = "<group>"; };
 		13CBD08D7FC1A45A284DAFAC /* ExhibitionPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExhibitionPreset.swift; sourceTree = "<group>"; };
 		16A94D07692DA8ED15F65ECA /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
+		840F13AE2C6D433AAF56BFB2 /* NoteMemoEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMemoEditor.swift; sourceTree = "<group>"; };
 		2A23A16BF16D33E6C655E03F /* SettingsICloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsICloudView.swift; sourceTree = "<group>"; };
 		2CD5A89F0A2C44139B72A53F /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
 		38D045A8B37556DF74DB9E28 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -86,14 +89,14 @@
 		5577F13430408B0200F4E0AD /* BusinessCardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessCardDetailView.swift; sourceTree = "<group>"; };
 		5577F1363041C76D00F4E0AD /* MonthlyCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyCalendarView.swift; sourceTree = "<group>"; };
 		5577F1383041C78800F4E0AD /* ExhibitionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExhibitionDetailView.swift; sourceTree = "<group>"; };
-		5577F13A3041C7EB00F4E0AD /* CircleCheckToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleCheckToggleStyle.swift; sourceTree = "<group>"; };
+		5577F13A3041C7EB00F4E0AD /* MacControlSurfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacControlSurfaces.swift; sourceTree = "<group>"; };
 		5577F13E3041F0EE00F4E0AD /* CalendarReminderSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarReminderSyncService.swift; sourceTree = "<group>"; };
 		5577F14030426D6000F4E0AD /* BusinessCardOCRReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessCardOCRReview.swift; sourceTree = "<group>"; };
 		5577F14230426DDC00F4E0AD /* BusinessCardDuplicateDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessCardDuplicateDetector.swift; sourceTree = "<group>"; };
 		5577F1443043252400F4E0AD /* BusinessCardCameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessCardCameraController.swift; sourceTree = "<group>"; };
 		5577F1463043253E00F4E0AD /* BusinessCardCameraCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessCardCameraCaptureView.swift; sourceTree = "<group>"; };
 		5577F14830433BDF00F4E0AD /* ExhibitionAddWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExhibitionAddWindowView.swift; sourceTree = "<group>"; };
-		5577F14A304411FF00F4E0AD /* CircularToolbarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularToolbarIcon.swift; sourceTree = "<group>"; };
+		5577F14A304411FF00F4E0AD /* ToolbarActionIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarActionIcon.swift; sourceTree = "<group>"; };
 		5577F14C3044185B00F4E0AD /* NewNoteTemplateSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewNoteTemplateSheetView.swift; sourceTree = "<group>"; };
 		5577F14E30441FB300F4E0AD /* CustomNoteTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNoteTemplate.swift; sourceTree = "<group>"; };
 		5577F1503044202F00F4E0AD /* CustomNoteTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNoteTemplateView.swift; sourceTree = "<group>"; };
@@ -124,6 +127,7 @@
 		8E447DB241C24E7FE9E3FC5E /* ExportSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheetView.swift; sourceTree = "<group>"; };
 		8F3920DDAEE200F05F4775AD /* BizNoteMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BizNoteMacApp.swift; sourceTree = "<group>"; };
 		9189CC5AF32378A99BAB9955 /* WorkLogTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkLogTemplateView.swift; sourceTree = "<group>"; };
+		A2C75439449149A5A36346FB /* NoteTemplateLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTemplateLayout.swift; sourceTree = "<group>"; };
 		A39BB408A6458B5E09022466 /* NSImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+Extensions.swift"; sourceTree = "<group>"; };
 		B8D7E0D64B8320022A98AFB4 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		CB08E75B66C9E29D5A221829 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -162,8 +166,8 @@
 				5598C333303D6CD900C46FE1 /* ContactPickerButton.swift */,
 				5598C335303D6D2200C46FE1 /* LocationPickerSheet.swift */,
 				5598C33F303DFBDA00C46FE1 /* TaskFormView.swift */,
-				5577F13A3041C7EB00F4E0AD /* CircleCheckToggleStyle.swift */,
-				5577F14A304411FF00F4E0AD /* CircularToolbarIcon.swift */,
+				5577F13A3041C7EB00F4E0AD /* MacControlSurfaces.swift */,
+				5577F14A304411FF00F4E0AD /* ToolbarActionIcon.swift */,
 				553183D83045A8E500E228C5 /* AutoHeightTextEditor.swift */,
 			);
 			path = Shared;
@@ -220,6 +224,7 @@
 			children = (
 				CF160BAB8FF640CCB79A2FFC /* Templates */,
 				16A94D07692DA8ED15F65ECA /* NoteDetailView.swift */,
+				840F13AE2C6D433AAF56BFB2 /* NoteMemoEditor.swift */,
 				0CF97553C7931C46F44524E7 /* TagEditorView.swift */,
 			);
 			path = NoteDetail;
@@ -300,6 +305,7 @@
 				DE245297787C315F41BA88D7 /* ExhibitionTemplateView.swift */,
 				736413830219B7E3CAFDFF49 /* MeetingMinutesTemplateView.swift */,
 				9189CC5AF32378A99BAB9955 /* WorkLogTemplateView.swift */,
+				A2C75439449149A5A36346FB /* NoteTemplateLayout.swift */,
 				5577F1503044202F00F4E0AD /* CustomNoteTemplateView.swift */,
 			);
 			path = Templates;
@@ -443,11 +449,12 @@
 				EC10F2B9AF641D170EC8A7FA /* ExhibitionTemplateView.swift in Sources */,
 				71B8302EE6244A09A9817D8D /* ExportSheetView.swift in Sources */,
 				C2846D9B3531D8678D499FA7 /* MeetingMinutesTemplateView.swift in Sources */,
-				5577F14B304411FF00F4E0AD /* CircularToolbarIcon.swift in Sources */,
+				5577F14B304411FF00F4E0AD /* ToolbarActionIcon.swift in Sources */,
 				1A3AAB2A85EF5D95192F01F9 /* NSImage+Extensions.swift in Sources */,
 				504E0DCFAED9DD9BEF5D69B9 /* Note.swift in Sources */,
 				0A7621A7240B321FD80222EE /* NoteCategory.swift in Sources */,
 				E5033AC89452E0E3F26BDCA1 /* NoteDetailView.swift in Sources */,
+				4646295504AF404FAB05461F /* NoteMemoEditor.swift in Sources */,
 				5577F1393041C78800F4E0AD /* ExhibitionDetailView.swift in Sources */,
 				5598C33C303DF7F500C46FE1 /* CardLinkButton.swift in Sources */,
 				553183D93045A8E500E228C5 /* AutoHeightTextEditor.swift in Sources */,
@@ -468,10 +475,11 @@
 				3F8CB95F5B47F472B21AB208 /* SidebarView.swift in Sources */,
 				5598C336303D6D2200C46FE1 /* LocationPickerSheet.swift in Sources */,
 				5598C33A303D6E1C00C46FE1 /* PDFExportService.swift in Sources */,
-				5577F13B3041C7EB00F4E0AD /* CircleCheckToggleStyle.swift in Sources */,
+				5577F13B3041C7EB00F4E0AD /* MacControlSurfaces.swift in Sources */,
 				8BA6AA3041F641B39BEE7131 /* SyncStatusView.swift in Sources */,
 				FE21A195D3F98BE383599135 /* TagEditorView.swift in Sources */,
 				2E5A3DE0D8EF438361B92A65 /* WorkLogTemplateView.swift in Sources */,
+				04AD47FADFC8428C8B863369 /* NoteTemplateLayout.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,7 +493,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BizNoteMac/BizNoteMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -506,7 +514,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fakuku.biznote.mac;
 				PRODUCT_NAME = "BizNote Desk";
 				SDKROOT = macosx;
@@ -594,7 +602,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BizNoteMac/BizNoteMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -615,7 +623,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fakuku.biznote.mac;
 				PRODUCT_NAME = "BizNote Desk";
 				SDKROOT = macosx;

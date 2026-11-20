@@ -121,7 +121,7 @@ struct BusinessCardPanelView: View {
             }
         }
         .padding(8)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
+        .macGroupSurface()
     }
 
     private func promptOpenPanel() {

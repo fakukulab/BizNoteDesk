@@ -15,7 +15,7 @@ struct ExhibitionDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 16) {
                     ExhibitionHeaderEditor(
                         draft: $draft,
                         isEditing: isEditing,
@@ -26,7 +26,7 @@ struct ExhibitionDetailView: View {
 
                     ExhibitionBodyEditor(draft: $draft, isEditing: isEditing)
                 }
-                .padding(24)
+                .padding(20)
             }
 
             Divider()
@@ -124,16 +124,10 @@ struct ExhibitionDetailView: View {
         preset.venue = draft.venue
         preset.organizer = draft.organizer
         preset.field = draft.exhibitItems
-        // The Mac app can't keep iOS rich-text formatting in sync with edited
-        // plain text, so drop the formatting when the text itself changes.
-        if preset.introduction != draft.introduction {
-            preset.introductionRTFData = ""
-        }
-        if preset.exhibitItems != draft.exhibitItems {
-            preset.exhibitItemsRTFData = ""
-        }
         preset.introduction = draft.introduction
         preset.exhibitItems = draft.exhibitItems
+        preset.introductionRTFData = draft.introductionRTF
+        preset.exhibitItemsRTFData = draft.exhibitItemsRTF
         preset.supervisor = draft.supervisor
         preset.contact = draft.contact
         preset.homepage = draft.homepage
@@ -158,7 +152,9 @@ private struct ExhibitionDraft: Equatable {
     var venue = ""
     var organizer = ""
     var introduction = ""
+    var introductionRTF = ""
     var exhibitItems = ""
+    var exhibitItemsRTF = ""
     var supervisor = ""
     var contact = ""
     var homepage = ""
@@ -173,7 +169,9 @@ private struct ExhibitionDraft: Equatable {
         venue = preset.venue
         organizer = preset.organizer
         introduction = preset.introduction
+        introductionRTF = preset.introductionRTFData
         exhibitItems = preset.exhibitItems
+        exhibitItemsRTF = preset.exhibitItemsRTFData
         supervisor = preset.supervisor
         contact = preset.contact
         homepage = preset.homepage
@@ -229,7 +227,7 @@ private struct ExhibitionHeaderEditor: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(14)
-        .background(Color.secondary.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
+        .macGroupSurface()
     }
 }
 
@@ -352,19 +350,10 @@ private struct ExhibitionBodyEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            ExhibitionTextFieldRow(
-                title: String(localized: "exhibitions.introduction", defaultValue: "행사소개"),
-                text: $draft.introduction,
-                isEditing: isEditing,
-                singleLine: false
-            )
-
-            ExhibitionTextFieldRow(
-                title: String(localized: "exhibitions.exhibitItems", defaultValue: "전시품목"),
-                text: $draft.exhibitItems,
-                isEditing: isEditing,
-                singleLine: false
-            )
+            richField(String(localized: "exhibitions.introduction", defaultValue: "행사소개"),
+                      text: $draft.introduction, rtf: $draft.introductionRTF)
+            richField(String(localized: "exhibitions.exhibitItems", defaultValue: "전시품목"),
+                      text: $draft.exhibitItems, rtf: $draft.exhibitItemsRTF)
 
             ExhibitionTextFieldRow(
                 title: String(localized: "exhibitions.organizer", defaultValue: "주최"),
@@ -388,6 +377,19 @@ private struct ExhibitionBodyEditor: View {
                 homepage: $draft.homepage,
                 isEditing: isEditing
             )
+        }
+    }
+
+    private func richField(_ title: String, text: Binding<String>, rtf: Binding<String>) -> some View {
+        NoteTemplateSection(title: title) {
+            if isEditing {
+                NoteMemoEditor(text: text, rtf: rtf, accessibilityTitle: title)
+                    .frame(height: 120)
+            } else {
+                Text(AttributedString(NoteMemoEditor.displayText(text.wrappedValue, rtf: rtf.wrappedValue)))
+                    .textSelection(.enabled)
+                    .frame(minHeight: 32, alignment: .topLeading)
+            }
         }
     }
 }
@@ -417,19 +419,24 @@ private struct ExhibitionTextBox: View {
     var singleLine: Bool = true
 
     var body: some View {
+        Group {
+            if isEditing {
+                textView
+                    .macInputSurface()
+            } else {
+                textView
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var textView: some View {
         ExhibitionTextView(
             text: $text,
             isEditable: isEditing,
             singleLine: singleLine,
             minimumLines: singleLine ? 1 : 2
         )
-        .padding(4)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
-        .overlay(
-            RoundedRectangle(cornerRadius: 6)
-                .stroke(isEditing ? Color.accentColor.opacity(0.35) : Color.clear, lineWidth: 1)
-        )
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -634,6 +641,5 @@ private struct ExhibitionActionBar: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
-        .background(.bar)
     }
 }

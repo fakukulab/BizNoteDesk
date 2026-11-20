@@ -60,19 +60,22 @@ struct TaskFormView: View {
     private let minutes = Array(stride(from: 0, to: 60, by: 5))
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             descriptionSection
-            combinedRow
+            Divider()
+            schedulingFields
+            Divider()
+            assigneeField
+            Divider()
             actionButtons
         }
         .padding(12)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
     }
 
     // MARK: - Sections
 
     private var descriptionSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 fieldLabel(String(localized: "template.taskForm.description", defaultValue: "내용"))
                 Spacer()
@@ -82,100 +85,122 @@ struct TaskFormView: View {
                 .buttonStyle(.link)
                 .font(.caption)
             }
-            TextField("", text: $description)
-                .textFieldStyle(.roundedBorder)
+            TextField(String(localized: "template.taskForm.description", defaultValue: "내용"), text: $description)
+                .textFieldStyle(.plain)
             if showDetail {
+                Divider()
                 TextEditor(text: $detail)
                     .frame(minHeight: 50)
-                    .padding(4)
-                    .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
                     .scrollContentBackground(.hidden)
             }
         }
     }
 
-    private var combinedRow: some View {
-        HStack(alignment: .top, spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
-                fieldLabel(String(localized: "template.taskForm.category", defaultValue: "Category"))
-                Picker("", selection: $category) {
-                    ForEach(ExhibitionTemplateData.TaskItem.TaskCategory.selectableCases) { c in
-                        Label(c.localizedName, systemImage: c.systemImage).tag(c)
+    private var schedulingFields: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 16) {
+                categoryField
+                dueField
+                timeField
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                categoryField
+                dueField
+                timeField
+            }
+        }
+    }
+
+    private var categoryField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            fieldLabel(String(localized: "template.taskForm.category", defaultValue: "Category"))
+            Picker("", selection: $category) {
+                ForEach(ExhibitionTemplateData.TaskItem.TaskCategory.selectableCases) { c in
+                    Label(c.localizedName, systemImage: c.systemImage).tag(c)
+                }
+            }
+            .labelsHidden()
+            .frame(width: 128)
+        }
+    }
+
+    private var dueField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            fieldLabel(String(localized: "template.taskForm.due", defaultValue: "Due"))
+            HStack {
+                Picker("", selection: $duePreset) {
+                    ForEach(DuePreset.allCases) { preset in
+                        Text(preset.localizedName).tag(preset)
                     }
                 }
                 .labelsHidden()
-                .frame(width: 130)
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                fieldLabel(String(localized: "template.taskForm.due", defaultValue: "Due"))
-                HStack {
-                    Picker("", selection: $duePreset) {
-                        ForEach(DuePreset.allCases) { preset in
-                            Text(preset.localizedName).tag(preset)
-                        }
-                    }
+                .frame(width: 100)
+                .onChange(of: duePreset) { _, preset in applyDuePreset(preset) }
+                DatePicker("", selection: $dueDate, displayedComponents: .date)
                     .labelsHidden()
-                    .frame(width: 100)
-                    .onChange(of: duePreset) { _, preset in applyDuePreset(preset) }
-                    DatePicker("", selection: $dueDate, displayedComponents: .date)
-                        .labelsHidden()
+            }
+        }
+    }
+
+    private var timeField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            fieldLabel(String(localized: "template.taskForm.time", defaultValue: "Time"))
+            HStack(spacing: 4) {
+                Picker("", selection: $hour) {
+                    ForEach(hours, id: \.self) { h in Text("\(h)").tag(h) }
                 }
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                fieldLabel(String(localized: "template.taskForm.time", defaultValue: "Time"))
-                HStack(spacing: 4) {
-                    Picker("", selection: $hour) {
-                        ForEach(hours, id: \.self) { h in Text("\(h)").tag(h) }
-                    }
-                    .labelsHidden()
-                    .frame(width: 50)
-                    Text(":")
-                    Picker("", selection: $minute) {
-                        ForEach(minutes, id: \.self) { m in Text(String(format: "%02d", m)).tag(m) }
-                    }
-                    .labelsHidden()
-                    .frame(width: 60)
-                    Picker("", selection: $isPM) {
-                        Text(String(localized: "template.taskForm.am", defaultValue: "AM")).tag(false)
-                        Text(String(localized: "template.taskForm.pm", defaultValue: "PM")).tag(true)
-                    }
-                    .labelsHidden()
-                    .frame(width: 60)
+                .labelsHidden()
+                .frame(width: 52)
+                Text(":")
+                Picker("", selection: $minute) {
+                    ForEach(minutes, id: \.self) { m in Text(String(format: "%02d", m)).tag(m) }
                 }
+                .labelsHidden()
+                .frame(width: 56)
+                Picker("", selection: $isPM) {
+                    Text(String(localized: "template.taskForm.am", defaultValue: "AM")).tag(false)
+                    Text(String(localized: "template.taskForm.pm", defaultValue: "PM")).tag(true)
+                }
+                .labelsHidden()
+                .frame(width: 56)
+            }
+        }
+    }
+
+    private var assigneeField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            fieldLabel(String(localized: "template.taskForm.assignee", defaultValue: "Assigned to"))
+            HStack(spacing: 8) {
+                Menu {
+                    Button(String(localized: "template.taskForm.assignee.myself", defaultValue: "자신")) {
+                        assigneeInputMode = .myself
+                        clearCustomAssignee()
+                        addAssignee(String(localized: "template.taskForm.assignee.myself", defaultValue: "자신"))
+                    }
+                    Button(String(localized: "template.taskForm.assignee.placeholder", defaultValue: "이름 입력")) {
+                        assigneeInputMode = .custom
+                    }
+                } label: {
+                    Label(assigneeMenuTitle, systemImage: "person.crop.circle.badge.plus")
+                }
+                .frame(width: 140, alignment: .leading)
+
+                if assigneeInputMode == .custom {
+                    TextField(String(localized: "template.taskForm.assignee.placeholder", defaultValue: "이름 입력"),
+                              text: $newAssigneeName)
+                        .textFieldStyle(.plain)
+                        .frame(width: 120)
+                        .onChange(of: newAssigneeName) { _, newValue in
+                            syncCustomAssignee(newValue)
+                        }
+                }
+
             }
 
-            VStack(alignment: .leading, spacing: 6) {
-                fieldLabel(String(localized: "template.taskForm.assignee", defaultValue: "Assigned to"))
-                HStack(spacing: 6) {
-                    Menu {
-                        Button(String(localized: "template.taskForm.assignee.myself", defaultValue: "자신")) {
-                            assigneeInputMode = .myself
-                            clearCustomAssignee()
-                            addAssignee(String(localized: "template.taskForm.assignee.myself", defaultValue: "자신"))
-                        }
-                        Button(String(localized: "template.taskForm.assignee.placeholder", defaultValue: "이름 입력")) {
-                            assigneeInputMode = .custom
-                        }
-                    } label: {
-                        Label(assigneeMenuTitle, systemImage: "person.crop.circle.badge.plus")
-                    }
-                    .frame(width: 140, alignment: .leading)
-
-                    if assigneeInputMode == .custom {
-                        TextField(String(localized: "template.taskForm.assignee.placeholder", defaultValue: "이름 입력"),
-                                  text: $newAssigneeName)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 120)
-                            .onChange(of: newAssigneeName) { _, newValue in
-                                syncCustomAssignee(newValue)
-                            }
-                    }
-
-                    if !assignees.isEmpty {
-                        assigneeChips
-                    }
+            if !assignees.isEmpty {
+                ScrollView(.horizontal) {
+                    assigneeChips
                 }
             }
         }
@@ -188,7 +213,7 @@ struct TaskFormView: View {
         case .custom:
             return String(localized: "template.taskForm.assignee.placeholder", defaultValue: "이름 입력")
         case .none:
-            return String(localized: "template.taskForm.assignee.select", defaultValue: "담당자 선택")
+            return String(localized: "template.taskForm.assignee.select", defaultValue: "선택")
         }
     }
 
@@ -207,7 +232,7 @@ struct TaskFormView: View {
                 .font(.caption)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+                .macGroupSurface()
             }
         }
     }

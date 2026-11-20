@@ -29,5 +29,6 @@ struct SettingsExportView: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
     }
 }

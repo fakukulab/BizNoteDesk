@@ -3,9 +3,25 @@ import Foundation
 struct WorkLogTemplateData: Codable, Equatable {
     var date: Date = Date()
     var workItems: [WorkItem] = []
+    var majorEvents: [MajorEvent] = []
     var achievements: String = ""
     var issues: String = ""
     var nextTodos: String = ""
+
+    struct MajorEvent: Codable, Identifiable, Equatable {
+        var id = UUID()
+        var title = ""
+    }
+
+    func tasksForNextEntry() -> [WorkItem] {
+        workItems.compactMap { item in
+            guard item.status == .inProgress || item.status == .onHold,
+                  !item.task.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+            var copy = WorkItem(status: item.status)
+            copy.task = item.task
+            return copy
+        }
+    }
 
     struct WorkItem: Codable, Identifiable, Equatable {
         var id: UUID = UUID()
@@ -18,6 +34,7 @@ struct WorkLogTemplateData: Codable, Equatable {
             case todo = "todo"
             case inProgress = "in_progress"
             case done = "done"
+            case onHold = "on_hold"
 
             var id: String { rawValue }
 
@@ -26,6 +43,7 @@ struct WorkLogTemplateData: Codable, Equatable {
                 case .todo:       return String(localized: "task.status.todo")
                 case .inProgress: return String(localized: "task.status.inProgress")
                 case .done:       return String(localized: "task.status.done")
+                case .onHold:     return String(localized: "task.status.onHold", defaultValue: "보류")
                 }
             }
         }
@@ -51,13 +69,14 @@ struct WorkLogTemplateData: Codable, Equatable {
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case date, workItems, achievements, issues, nextTodos
+        case date, workItems, majorEvents, achievements, issues, nextTodos
     }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         date         = (try? c.decode(Date.self, forKey: .date)) ?? Date()
         workItems    = (try? c.decode([WorkItem].self, forKey: .workItems)) ?? []
+        majorEvents  = (try? c.decode([MajorEvent].self, forKey: .majorEvents)) ?? []
         achievements = (try? c.decode(String.self, forKey: .achievements)) ?? ""
         issues       = (try? c.decode(String.self, forKey: .issues)) ?? ""
         nextTodos    = (try? c.decode(String.self, forKey: .nextTodos)) ?? ""
@@ -71,6 +90,8 @@ struct MeetingMinutesTemplateData: Codable, Equatable {
     var locationLongitude: Double? = nil
     var isOnlineMeeting: Bool = false
     var onlineLink: String = ""
+    var onlinePhone: String = ""
+    var memoRTFData: String = ""
     var participants: [Participant] = []
     var agenda: String = ""
     var discussionPoints: [String] = []
@@ -138,8 +159,8 @@ struct MeetingMinutesTemplateData: Codable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case meetingDate, location, locationLatitude, locationLongitude,
-             isOnlineMeeting, onlineLink, participants, agenda,
-             discussionPoints, decisions, actionItems
+             isOnlineMeeting, onlineLink, onlinePhone, participants, agenda,
+             discussionPoints, decisions, actionItems, memoRTFData
     }
 
     init(from decoder: Decoder) throws {
@@ -150,6 +171,8 @@ struct MeetingMinutesTemplateData: Codable, Equatable {
         locationLongitude = try? c.decodeIfPresent(Double.self, forKey: .locationLongitude)
         isOnlineMeeting   = (try? c.decode(Bool.self, forKey: .isOnlineMeeting)) ?? false
         onlineLink        = (try? c.decode(String.self, forKey: .onlineLink)) ?? ""
+        onlinePhone       = (try? c.decode(String.self, forKey: .onlinePhone)) ?? ""
+        memoRTFData       = (try? c.decode(String.self, forKey: .memoRTFData)) ?? ""
         participants      = (try? c.decode([Participant].self, forKey: .participants)) ?? []
         agenda            = (try? c.decode(String.self, forKey: .agenda)) ?? ""
         discussionPoints  = (try? c.decode([String].self, forKey: .discussionPoints)) ?? []
@@ -266,19 +289,21 @@ struct ExhibitionTemplateData: Codable, Equatable {
         enum TaskCategory: String, Codable, CaseIterable, Identifiable {
             case call     = "call"
             case email    = "email"
+            case message  = "message"
             case followUp = "follow_up"
             case meeting  = "meeting"
 
             var id: String { rawValue }
 
             static var selectableCases: [TaskCategory] {
-                [.call, .email, .meeting]
+                [.call, .message, .email, .meeting]
             }
 
             var localizedName: String {
                 switch self {
                 case .call:     return String(localized: "task.category.call")
                 case .email:    return String(localized: "task.category.email")
+                case .message:  return String(localized: "task.category.message", defaultValue: "메시지")
                 case .followUp: return String(localized: "task.category.followUp")
                 case .meeting:  return String(localized: "task.category.meeting")
                 }
@@ -288,6 +313,7 @@ struct ExhibitionTemplateData: Codable, Equatable {
                 switch self {
                 case .call:     return "phone.fill"
                 case .email:    return "envelope.fill"
+                case .message:  return "message.fill"
                 case .followUp: return "arrow.triangle.2.circlepath"
                 case .meeting:  return "person.2.fill"
                 }

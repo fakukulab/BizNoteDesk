@@ -10,7 +10,7 @@ struct TagEditorView: View {
                 Image(systemName: "tag")
                     .foregroundStyle(.secondary)
                 TextField(String(localized: "tags.add.placeholder"), text: $input)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                     .onSubmit(addTag)
                 Button(String(localized: "tags.add")) { addTag() }
                     .disabled(input.trimmingCharacters(in: .whitespaces).isEmpty)

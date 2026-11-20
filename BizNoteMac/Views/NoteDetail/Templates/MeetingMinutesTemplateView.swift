@@ -9,19 +9,20 @@ struct MeetingMinutesTemplateView: View {
     @AppStorage("general.enableTaskSections") private var enableTaskSections: Bool = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Toggle(String(localized: "template.meeting.online", defaultValue: "온라인"),
                        isOn: $data.isOnlineMeeting)
                     .fixedSize()
+                NoteInlineDivider()
                 if data.isOnlineMeeting {
                     TextField(String(localized: "template.meeting.onlineLink", defaultValue: "회의 링크 (Zoom, Teams 등)"),
                               text: $data.onlineLink)
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(.plain)
                         .padding(.vertical, 2)
                 } else {
                     TextField(String(localized: "template.meeting.location"), text: $data.location)
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(.plain)
                         .padding(.vertical, 2)
                     Button(String(localized: "location.picker.title", defaultValue: "위치찾기")) {
                         showLocationPicker = true
@@ -30,75 +31,76 @@ struct MeetingMinutesTemplateView: View {
                 }
             }
 
-            GroupBox {
-                VStack(alignment: .leading, spacing: 10) {
-                    sectionTitle(String(localized: "template.meeting.participants"))
-                    VStack(spacing: 10) {
-                        ForEach($data.participants) { $person in
-                            participantRow($person)
-                        }
-                        Button {
-                            data.participants.append(.init())
-                        } label: {
-                            Label(String(localized: "template.meeting.participants.add",
-                                         defaultValue: "참석자 추가"), systemImage: "plus")
-                        }
-                        .buttonStyle(.borderless)
-                    }
+            if data.isOnlineMeeting {
+                Divider()
+                LabeledContent(String(localized: "task.category.call")) {
+                    TextField(String(localized: "template.meeting.onlinePhone", defaultValue: "통화 번호"),
+                              text: $data.onlinePhone)
+                        .textFieldStyle(.plain)
                 }
+            }
+
+            NoteTemplateSection(title: String(localized: "template.meeting.participants")) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach($data.participants) { $person in
+                        participantRow($person)
+                        Divider()
+                    }
+                    Button {
+                        data.participants.append(.init())
+                    } label: {
+                        Label(String(localized: "template.meeting.participant.add.short",
+                                     defaultValue: "참석자"), systemImage: "plus")
+                    }
+                    .buttonStyle(.borderless)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
             }
 
-            GroupBox {
-                VStack(alignment: .leading, spacing: 16) {
-                    sectionTitle(String(localized: "template.meeting.agenda"))
-                    AutoHeightTextEditor(text: $data.agenda, minHeight: 60)
-                        .padding(6)
-                        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
-                        .scrollContentBackground(.hidden)
+            NoteTemplateSection(title: String(localized: "template.meeting.agenda")) {
+                AutoHeightTextEditor(text: $data.agenda, minHeight: 60)
+                    .scrollContentBackground(.hidden)
+            }
 
-                    Divider()
+            NoteTemplateSection(title: String(localized: "template.meeting.discussion")) {
+                ListEditorView(items: $data.discussionPoints,
+                               placeholder: String(localized: "template.meeting.discussion.placeholder"),
+                               addTitle: String(localized: "template.meeting.discussion.add", defaultValue: "논의사항"))
+            }
 
-                    sectionTitle(String(localized: "template.meeting.discussion"))
-                    ListEditorView(items: $data.discussionPoints,
-                                   placeholder: String(localized: "template.meeting.discussion.placeholder"))
-
-                    Divider()
-
-                    sectionTitle(String(localized: "template.meeting.decisions"))
-                    ListEditorView(items: $data.decisions,
-                                   placeholder: String(localized: "template.meeting.decisions.placeholder"))
-                }
-                .padding(.vertical, 4)
+            NoteTemplateSection(title: String(localized: "template.meeting.decisions")) {
+                ListEditorView(items: $data.decisions,
+                               placeholder: String(localized: "template.meeting.decisions.placeholder"),
+                               addTitle: String(localized: "template.meeting.decisions.add", defaultValue: "결정사항"))
             }
 
             if enableTaskSections {
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 10) {
-                        sectionTitle(String(localized: "template.meeting.actionItems"))
-                        VStack(spacing: 10) {
-                            ForEach($data.actionItems) { $item in
-                                actionItemRow($item)
+                NoteTemplateSection(title: String(localized: "template.meeting.actionItems")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach($data.actionItems) { $item in
+                            actionItemRow($item)
+                            Divider()
+                        }
+                        if showTaskForm {
+                            TaskFormView(
+                                assigneeSuggestions: participantNames,
+                                onSave: { result in
+                                    addActionItem(from: result)
+                                    showTaskForm = false
+                                },
+                                onCancel: { showTaskForm = false }
+                            )
+                        } else {
+                            Button {
+                                showTaskForm = true
+                            } label: {
+                                Label(String(localized: "template.workLog.item.add", defaultValue: "업무"), systemImage: "plus")
                             }
-                            if showTaskForm {
-                                TaskFormView(
-                                    assigneeSuggestions: participantNames,
-                                    onSave: { result in
-                                        addActionItem(from: result)
-                                        showTaskForm = false
-                                    },
-                                    onCancel: { showTaskForm = false }
-                                )
-                            } else {
-                                Button {
-                                    showTaskForm = true
-                                } label: {
-                                    Label(String(localized: "template.meeting.action.add"), systemImage: "plus")
-                                }
-                                .buttonStyle(.borderless)
-                            }
+                            .buttonStyle(.borderless)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 4)
                 }
             }
@@ -122,46 +124,18 @@ struct MeetingMinutesTemplateView: View {
         return Array(Set(names)).sorted()
     }
 
-    @ViewBuilder
-    private func sectionTitle(_ title: String) -> some View {
-        Text(title).font(.callout.weight(.semibold))
-    }
-
-    @ViewBuilder
     private func actionItemRow(_ item: Binding<MeetingMinutesTemplateData.ActionItem>) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Toggle("", isOn: item.isCompleted)
-                    .labelsHidden()
-                    .toggleStyle(.circleCheck(fillColor: NoteCategory.meetingMinutes.accentColor))
-                Picker("", selection: item.category) {
-                    ForEach(ExhibitionTemplateData.TaskItem.TaskCategory.selectableCases) { c in
-                        Label(c.localizedName, systemImage: c.systemImage).tag(c)
-                    }
-                }
-                .labelsHidden()
-                .frame(width: 110)
-                TextField(String(localized: "template.meeting.action.task"), text: item.task)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.vertical, 2)
-                Text(item.wrappedValue.assignees.joined(separator: ", "))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(width: 120, alignment: .leading)
-                    .lineLimit(1)
-                DatePicker("", selection: item.dueDate, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                Button {
-                    data.actionItems.removeAll { $0.id == item.wrappedValue.id }
-                } label: { Image(systemName: "minus.circle") }
-                .buttonStyle(.plain)
-            }
-            if !item.wrappedValue.detail.isEmpty {
-                Text(item.wrappedValue.detail)
-                    .font(.caption2).foregroundStyle(.tertiary).lineLimit(2)
-            }
+        let id = item.wrappedValue.id
+        return NoteActionRow(
+            isCompleted: item.isCompleted,
+            category: item.category,
+            title: item.task,
+            dueDate: item.dueDate,
+            assignees: item.wrappedValue.assignees,
+            detail: item.wrappedValue.detail
+        ) {
+            data.actionItems.removeAll { $0.id == id }
         }
-        .padding(.vertical, 2)
     }
 
     private func addActionItem(from result: TaskFormResult) {
@@ -179,15 +153,17 @@ struct MeetingMinutesTemplateView: View {
         HStack {
             TextField(String(localized: "template.meeting.participants.name", defaultValue: "이름"),
                       text: person.name)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .padding(.vertical, 2)
+            NoteInlineDivider()
             TextField(String(localized: "card.field.jobTitle", defaultValue: "직급"),
                       text: person.jobTitle)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .padding(.vertical, 2)
+            NoteInlineDivider()
             TextField(String(localized: "template.meeting.participants.company", defaultValue: "소속"),
                       text: person.company)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .padding(.vertical, 2)
             CardLinkButton(cards: businessCards, onSelect: { card in applyCard(card, to: person) })
             ContactPickerButton(onSelect: { contact in applyContact(contact, to: person) },
@@ -197,8 +173,7 @@ struct MeetingMinutesTemplateView: View {
             } label: { Image(systemName: "minus.circle") }
             .buttonStyle(.plain)
         }
-        .padding(10)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
+        .padding(.vertical, 4)
     }
 
     private func applyContact(_ contact: CNContact, to person: Binding<MeetingMinutesTemplateData.Participant>) {
@@ -222,9 +197,10 @@ struct MeetingMinutesTemplateView: View {
 struct ListEditorView: View {
     @Binding var items: [String]
     let placeholder: String
+    let addTitle: String
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             ForEach(items.indices, id: \.self) { i in
                 HStack {
                     Text("•").foregroundStyle(.secondary)
@@ -232,21 +208,23 @@ struct ListEditorView: View {
                         get: { items.indices.contains(i) ? items[i] : "" },
                         set: { if items.indices.contains(i) { items[i] = $0 } }
                     ))
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                     .padding(.vertical, 2)
                     Button {
                         if items.indices.contains(i) { items.remove(at: i) }
                     } label: { Image(systemName: "minus.circle") }
                     .buttonStyle(.plain)
                 }
+                Divider()
             }
             Button {
                 items.append("")
             } label: {
-                Label(String(localized: "list.add"), systemImage: "plus")
+                Label(addTitle, systemImage: "plus")
             }
             .buttonStyle(.borderless)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)
     }
 }

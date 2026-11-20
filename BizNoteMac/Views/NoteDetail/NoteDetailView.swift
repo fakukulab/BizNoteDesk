@@ -3,6 +3,9 @@ import SwiftData
 
 struct NoteDetailView: View {
     @Bindable var note: Note
+    var onOpenMeeting: (Note) -> Void = { _ in }
+    @Query(filter: #Predicate<Note> { $0.categoryRaw == "meeting_minutes" })
+    private var meetingNotes: [Note]
     @Environment(\.modelContext) private var context
 
     @State private var workLog: WorkLogTemplateData = .init()
@@ -19,11 +22,7 @@ struct NoteDetailView: View {
 
                 templateSection
 
-                Divider()
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "note.freeMemo"))
-                        .font(.callout.weight(.semibold))
+                NoteTemplateSection(title: String(localized: "note.freeMemo")) {
                     freeMemoField
                 }
 
@@ -31,18 +30,25 @@ struct NoteDetailView: View {
 
                 TagEditorView(tags: $note.tags)
             }
-            .padding(24)
+            .padding(20)
         }
         .navigationTitle(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
         .onAppear(perform: loadTemplate)
-        .onChange(of: workLog) { _, new in
+        .onChange(of: workLog) { old, new in
             save(template: new)
             updateWorkLogTitleIfNeeded()
-            syncWorkLogReminders()
+            if old.workItems != new.workItems || old.date != new.date {
+                syncWorkLogReminders()
+            }
+            if old.majorEvents != new.majorEvents || old.date != new.date {
+                CalendarReminderSyncService.shared.scheduleWorkLogSync(for: note, previous: old)
+            }
         }
-        .onChange(of: meeting) { _, new in
+        .onChange(of: meeting) { old, new in
             save(template: new)
-            syncMeetingReminders()
+            if old.actionItems != new.actionItems {
+                syncMeetingReminders()
+            }
         }
         .onChange(of: exhibition) { _, new in
             save(template: new)
@@ -53,6 +59,7 @@ struct NoteDetailView: View {
         }
         .onChange(of: note.title) { _, _ in touch() }
         .onChange(of: note.content) { _, _ in touch() }
+        .onChange(of: note.contentRTFData) { _, _ in touch() }
         .onChange(of: note.tags) { _, _ in touch() }
         .onChange(of: note.attachmentPaths) { _, _ in touch() }
     }
@@ -62,7 +69,7 @@ struct NoteDetailView: View {
     private var isExhibition: Bool { !note.isCustomCategory && note.category == .exhibition }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Button {
                     note.isFavorite.toggle()
@@ -77,16 +84,16 @@ struct NoteDetailView: View {
 
                 if isWorkLog {
                     Text(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
-                        .font(.largeTitle.weight(.semibold))
+                        .font(.title.weight(.semibold))
                 } else {
                     TextField(String(localized: "note.title.placeholder"), text: $note.title)
-                        .font(.largeTitle.weight(.semibold))
+                        .font(.title.weight(.semibold))
                         .textFieldStyle(.plain)
                         .accessibilityLabel(String(localized: "note.title.placeholder"))
                 }
             }
 
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Label(note.categoryName, systemImage: note.categoryIconName)
                     .foregroundStyle(note.categoryAccentColor)
                     .font(.callout)
@@ -114,22 +121,14 @@ struct NoteDetailView: View {
         }
     }
 
-    @ViewBuilder
     private var freeMemoField: some View {
-        if isWorkLog || isMeeting || isExhibition {
-            AutoHeightTextEditor(text: $note.content, minHeight: 40)
-                .font(.body)
-                .padding(8)
-                .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
-                .scrollContentBackground(.hidden)
-        } else {
-            TextEditor(text: $note.content)
-                .font(.body)
-                .frame(minHeight: 220)
-                .padding(8)
-                .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
-                .scrollContentBackground(.hidden)
-        }
+        NoteMemoEditor(text: $note.content, rtf: isMeeting ? $meeting.memoRTFData : $note.contentRTFData)
+            .frame(height: note.isCustomCategory ? 220 : 120)
+    }
+
+    private var meetingsOnWorkLogDate: [Note] {
+        meetingNotes.filter { Calendar.current.isDate($0.contentDate, inSameDayAs: workLog.date) }
+            .sorted { $0.contentDate < $1.contentDate }
     }
 
     @ViewBuilder
@@ -141,7 +140,8 @@ struct NoteDetailView: View {
         } else {
             switch note.category {
             case .workLog:
-                WorkLogTemplateView(data: $workLog, attachmentPaths: $note.attachmentPaths)
+                WorkLogTemplateView(data: $workLog, attachmentPaths: $note.attachmentPaths,
+                                    meetings: meetingsOnWorkLogDate, onOpenMeeting: onOpenMeeting)
             case .meetingMinutes:
                 MeetingMinutesTemplateView(data: $meeting, businessCards: note.businessCards ?? [])
             case .exhibition:

@@ -6,8 +6,8 @@ struct ExhibitionTemplateView: View {
     @Binding var data: ExhibitionTemplateData
     let businessCards: [BusinessCard]
     @Query(sort: \ExhibitionPreset.startDate, order: .reverse) private var presets: [ExhibitionPreset]
-    @State private var showTaskForm = false
     @State private var showPresetPicker = false
+    @State private var showTaskForm = false
     @AppStorage("general.enableTaskSections") private var enableTaskSections: Bool = true
 
     static let worldCountryNames: [String] = {
@@ -17,15 +17,17 @@ struct ExhibitionTemplateView: View {
     }()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 TextField(String(localized: "template.exhibition.name", defaultValue: "행사 이름"), text: $data.exhibitionName)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                 Button(String(localized: "template.exhibition.loadPreset", defaultValue: "행사 조회")) {
                     showPresetPicker = true
                 }
                 .frame(minWidth: 96)
             }
+
+            Divider()
 
             HStack {
                 Text(String(localized: "template.exhibition.eventDate", defaultValue: "행사 일자"))
@@ -38,11 +40,17 @@ struct ExhibitionTemplateView: View {
                     .labelsHidden()
             }
 
+            Divider()
+
             TextField(String(localized: "template.exhibition.venue"), text: $data.venue)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
+
+            Divider()
 
             TextField(String(localized: "template.exhibition.organizer"), text: $data.organizer)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
+
+            Divider()
 
             HStack {
                 Text(String(localized: "template.exhibition.participationType", defaultValue: "참가 형태"))
@@ -64,32 +72,31 @@ struct ExhibitionTemplateView: View {
             }
 
             if enableTaskSections {
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 10) {
-                        sectionTitle(String(localized: "template.meeting.actionItems"))
-                        VStack(spacing: 10) {
-                            ForEach($data.tasks) { $task in
-                                taskRow($task)
+                NoteTemplateSection(title: String(localized: "template.exhibition.followUpTasks", defaultValue: "후속업무")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach($data.tasks) { $task in
+                            taskRow($task)
+                            Divider()
+                        }
+                        if showTaskForm {
+                            TaskFormView(
+                                assigneeSuggestions: assigneeOptions,
+                                onSave: { result in
+                                    addTask(from: result)
+                                    showTaskForm = false
+                                },
+                                onCancel: { showTaskForm = false }
+                            )
+                        } else {
+                            Button {
+                                showTaskForm = true
+                            } label: {
+                                Label(String(localized: "template.exhibition.followUpTasks", defaultValue: "후속업무"), systemImage: "plus")
                             }
-                            if showTaskForm {
-                                TaskFormView(
-                                    assigneeSuggestions: assigneeOptions,
-                                    onSave: { result in
-                                        addTask(from: result)
-                                        showTaskForm = false
-                                    },
-                                    onCancel: { showTaskForm = false }
-                                )
-                            } else {
-                                Button {
-                                    showTaskForm = true
-                                } label: {
-                                    Label(String(localized: "template.meeting.action.add"), systemImage: "plus")
-                                }
-                                .buttonStyle(.borderless)
-                            }
+                            .buttonStyle(.borderless)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 4)
                 }
             }
@@ -113,46 +120,18 @@ struct ExhibitionTemplateView: View {
         return Array(Set(names.filter { !$0.isEmpty })).sorted()
     }
 
-    @ViewBuilder
-    private func sectionTitle(_ title: String) -> some View {
-        Text(title).font(.callout.weight(.semibold))
-    }
-
-    @ViewBuilder
-    private func taskRow(_ task: Binding<ExhibitionTemplateData.TaskItem>) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Toggle("", isOn: task.isCompleted)
-                    .labelsHidden()
-                    .toggleStyle(.circleCheck(fillColor: NoteCategory.exhibition.accentColor))
-                Picker("", selection: task.category) {
-                    ForEach(ExhibitionTemplateData.TaskItem.TaskCategory.selectableCases) { c in
-                        Label(c.localizedName, systemImage: c.systemImage).tag(c)
-                    }
-                }
-                .labelsHidden()
-                .frame(width: 110)
-                TextField(String(localized: "template.meeting.action.task"), text: task.title)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.vertical, 2)
-                Text(task.wrappedValue.assignees.joined(separator: ", "))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(width: 120, alignment: .leading)
-                    .lineLimit(1)
-                DatePicker("", selection: task.dueDate, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                Button {
-                    data.tasks.removeAll { $0.id == task.wrappedValue.id }
-                } label: { Image(systemName: "minus.circle") }
-                .buttonStyle(.plain)
-            }
-            if !task.wrappedValue.detail.isEmpty {
-                Text(task.wrappedValue.detail)
-                    .font(.caption2).foregroundStyle(.tertiary).lineLimit(2)
-            }
+    private func taskRow(_ item: Binding<ExhibitionTemplateData.TaskItem>) -> some View {
+        let id = item.wrappedValue.id
+        return NoteActionRow(
+            isCompleted: item.isCompleted,
+            category: item.category,
+            title: item.title,
+            dueDate: item.dueDate,
+            assignees: item.wrappedValue.assignees,
+            detail: item.wrappedValue.detail
+        ) {
+            data.tasks.removeAll { $0.id == id }
         }
-        .padding(.vertical, 2)
     }
 
     private func addTask(from result: TaskFormResult) {
@@ -166,37 +145,41 @@ struct ExhibitionTemplateView: View {
     }
 
     private var visitedBoothsSection: some View {
-        GroupBox(String(localized: "template.exhibition.booths")) {
-            VStack(spacing: 8) {
+        NoteTemplateSection(title: String(localized: "template.exhibition.booths")) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach($data.visitedBooths) { $booth in
                     boothRow($booth)
+                    Divider()
                 }
                 Button {
                     data.visitedBooths.append(.init())
                 } label: {
-                    Label(String(localized: "template.exhibition.booth.add", defaultValue: "사람 추가"), systemImage: "plus")
+                    Label(String(localized: "template.exhibition.person.add", defaultValue: "사람"), systemImage: "plus")
                 }
                 .buttonStyle(.borderless)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 4)
         }
     }
 
     @ViewBuilder
     private func boothRow(_ booth: Binding<ExhibitionTemplateData.VisitedBooth>) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
             HStack {
                 TextField(String(localized: "template.meeting.participants.name", defaultValue: "이름"),
                           text: booth.contactPerson)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                     .padding(.vertical, 2)
+                NoteInlineDivider()
                 TextField(String(localized: "card.field.jobTitle", defaultValue: "직급"),
                           text: booth.jobTitle)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                     .padding(.vertical, 2)
+                NoteInlineDivider()
                 TextField(String(localized: "template.exhibition.visitedBooth.company", defaultValue: "회사"),
                           text: booth.companyName)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
                     .padding(.vertical, 2)
                 CardLinkButton(cards: businessCards, onSelect: { card in applyCard(card, toBooth: booth) })
                 ContactPickerButton(onSelect: { contact in applyContact(contact, toBooth: booth) },
@@ -206,42 +189,43 @@ struct ExhibitionTemplateView: View {
                 } label: { Image(systemName: "minus.circle") }
                 .buttonStyle(.plain)
             }
+            Divider()
             HStack {
                 TextField(String(localized: "template.exhibition.booth.contactPhone", defaultValue: "연락처"),
                           text: booth.contactPhone)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
+                NoteInlineDivider()
                 TextField(String(localized: "template.exhibition.booth.contactEmail", defaultValue: "이메일"),
                           text: booth.contactEmail)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
             }
-            HStack(alignment: .top, spacing: 6) {
+            Divider()
+            HStack(alignment: .top, spacing: 8) {
                 Text(String(localized: "template.exhibition.contact.memo", defaultValue: "메모"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(width: 40, alignment: .leading)
                 AutoHeightTextEditor(text: booth.notes, minHeight: 22)
-                    .padding(4)
-                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 4))
-                    .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+                    .scrollContentBackground(.hidden)
             }
         }
-        .padding(10)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
+        .padding(.vertical, 4)
     }
 
     private var contactsSection: some View {
-        GroupBox(String(localized: "template.exhibition.contacts", defaultValue: "만난 사람")) {
-            VStack(spacing: 8) {
+        NoteTemplateSection(title: String(localized: "template.exhibition.contacts", defaultValue: "만난 사람")) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach($data.contacts) { $contact in
-                    VStack(spacing: 6) {
+                    VStack(spacing: 8) {
                         HStack {
                             TextField(String(localized: "template.meeting.participants.name", defaultValue: "이름"),
                                       text: $contact.name)
-                                .textFieldStyle(.roundedBorder)
+                                .textFieldStyle(.plain)
                                 .padding(.vertical, 2)
+                            NoteInlineDivider()
                             TextField(String(localized: "card.field.jobTitle", defaultValue: "직급"),
                                       text: $contact.jobTitle)
-                                .textFieldStyle(.roundedBorder)
+                                .textFieldStyle(.plain)
                                 .padding(.vertical, 2)
                             Picker(String(localized: "template.exhibition.contact.country", defaultValue: "국가"),
                                    selection: $contact.country) {
@@ -260,38 +244,41 @@ struct ExhibitionTemplateView: View {
                             } label: { Image(systemName: "minus.circle") }
                             .buttonStyle(.plain)
                         }
+                        Divider()
                         TextField(String(localized: "template.exhibition.booth.company", defaultValue: "회사명"),
                                   text: $contact.company)
-                            .textFieldStyle(.roundedBorder)
+                            .textFieldStyle(.plain)
+                        Divider()
                         HStack {
                             TextField(String(localized: "template.exhibition.booth.contactPhone", defaultValue: "연락처"),
                                       text: $contact.phone)
-                                .textFieldStyle(.roundedBorder)
+                                .textFieldStyle(.plain)
+                            NoteInlineDivider()
                             TextField(String(localized: "template.exhibition.booth.contactEmail", defaultValue: "이메일"),
                                       text: $contact.email)
-                                .textFieldStyle(.roundedBorder)
+                                .textFieldStyle(.plain)
                         }
-                        HStack(alignment: .top, spacing: 6) {
+                        Divider()
+                        HStack(alignment: .top, spacing: 8) {
                             Text(String(localized: "template.exhibition.contact.memo", defaultValue: "메모"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 40, alignment: .leading)
                             AutoHeightTextEditor(text: $contact.memo, minHeight: 22)
-                                .padding(4)
-                                .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 4))
-                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.3)))
+                                .scrollContentBackground(.hidden)
                         }
                     }
-                    .padding(10)
-                    .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
+                    .padding(.vertical, 4)
+                    Divider()
                 }
                 Button {
                     data.contacts.append(.init())
                 } label: {
-                    Label(String(localized: "template.exhibition.contacts.add", defaultValue: "사람 추가"), systemImage: "plus")
+                    Label(String(localized: "template.exhibition.person.add", defaultValue: "사람"), systemImage: "plus")
                 }
                 .buttonStyle(.borderless)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 4)
         }
     }

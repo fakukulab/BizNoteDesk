@@ -27,7 +27,7 @@ struct NewNoteTemplateSheetView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 16) {
             NewNoteSheetHeader()
 
             VStack(alignment: .leading, spacing: 8) {
@@ -38,7 +38,7 @@ struct NewNoteTemplateSheetView: View {
                     .submitLabel(.done)
             }
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text(String(localized: "note.new.template", defaultValue: "템플릿"))
                     .font(.callout.weight(.semibold))
 
@@ -73,9 +73,9 @@ struct NewNoteTemplateSheetView: View {
                 .disabled(trimmedTitle.isEmpty)
             }
         }
-        .padding(22)
-        .frame(width: 460)
-        .frame(minHeight: 430)
+        .padding(20)
+        .frame(width: 480)
+        .frame(minHeight: 432)
     }
 
     private var trimmedTitle: String {
@@ -85,7 +85,7 @@ struct NewNoteTemplateSheetView: View {
 
 private struct NewNoteSheetHeader: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(String(localized: "note.new.title", defaultValue: "새 노트 추가"))
                 .font(.title2.weight(.semibold))
             Text(String(localized: "note.new.message", defaultValue: "노트 이름을 입력하고 앞으로 사용할 템플릿을 선택하세요."))
@@ -128,11 +128,11 @@ private struct NewNoteTemplateOptionRow: View {
             .contentShape(Rectangle())
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? category.accentColor.opacity(0.12) : Color.secondary.opacity(0.06))
+                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color(nsColor: .controlBackgroundColor))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? category.accentColor : Color.secondary.opacity(0.18), lineWidth: isSelected ? 1.5 : 1)
+                    .stroke(isSelected ? Color.accentColor : Color(nsColor: .separatorColor), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

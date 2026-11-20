@@ -53,7 +53,7 @@ struct MonthlyCalendarView: View {
             }
         }
         .padding(12)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+        .macGroupSurface()
     }
 
     private var monthTitle: String {

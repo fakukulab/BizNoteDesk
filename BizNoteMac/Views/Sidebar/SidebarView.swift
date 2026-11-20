@@ -76,7 +76,6 @@ struct SidebarView: View {
         .navigationTitle("BizNote")
         .safeAreaInset(edge: .bottom) {
             SyncStatusView()
-                .background(.bar)
         }
         .confirmationDialog(
             String(localized: "settings.categories.delete.title"),
@@ -267,7 +266,7 @@ private struct CustomTemplateSectionOption: View {
             orderButtons
         }
         .padding(10)
-        .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+        .macGroupSurface()
     }
 
     private var orderButtons: some View {

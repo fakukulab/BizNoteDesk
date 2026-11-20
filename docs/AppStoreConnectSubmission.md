@@ -1,11 +1,11 @@
-# BizNote macOS App Store Connect Submission
+# BizNote Desk macOS App Store Connect Submission
 
 ## Release Choices
 
 - Platform: macOS
 - Bundle ID: `com.fakuku.biznote.mac`
-- Version: `1.0`
-- Build: `1`
+- Version: `1.1.0`
+- Build: `10`
 - Price: Free
 - Release mode: Automatic release after approval
 - Primary metadata language: Korean
@@ -16,7 +16,7 @@
 
 ### Name
 
-BizNote
+BizNote Desk
 
 ### Subtitle
 
@@ -63,13 +63,19 @@ BizNote는 반복되는 업무 기록을 간결하게 정리하고, 현장에서
 
 ### What's New
 
-macOS용 BizNote 첫 출시입니다.
+**한국어**
 
-- 업무 노트와 회의록 작성
-- 명함 인식 및 연락처 정리
-- 전시회 기록 관리
-- iCloud 동기화
-- PDF 및 스프레드시트 내보내기
+- 노트, 명함, 행사 관리 화면을 macOS 스타일로 정리했습니다. 노트와 행사 추가 화면은 입력칸 테두리를 줄이고 항목을 구분선으로 나눴습니다.
+- 업무일지에 주요 행사와 캘린더 연동을 추가했습니다. 진행 중이거나 보류한 업무는 다음 업무일지에 자동으로 복사되며, 같은 날의 회의록을 업무일지에서 열 수 있습니다.
+- 회의록과 행사 노트의 업무에 메시지 분류를 추가했습니다. 온라인 회의록에는 통화 번호를 기록할 수 있습니다.
+- 노트 메모와 행사 소개·전시품목에 제목, 취소선, 글머리 기호 및 번호 목록 서식을 추가했습니다.
+
+**English**
+
+- Refined the macOS interface for notes, business cards, and events, with cleaner note and event entry forms.
+- Added key events with Calendar sync to work logs. In-progress and on-hold tasks carry forward to the next work log, and you can open meeting minutes from the same day.
+- Added a Message task category to meeting minutes and event notes, plus a call number field for online meetings.
+- Added headings, strikethrough, bulleted lists, and numbered lists to note memos and event descriptions.
 
 ### Support URL
 
@@ -91,7 +97,7 @@ https://fakukulab.github.io/BizNoteforMac/privacy.html
 
 ### Contact
 
-TODO: App Store 심사 연락 담당자 이름, 전화번호, 이메일 입력
+App Store Connect에 저장된 심사 연락 담당자의 이름, 전화번호, 이메일을 제출 전에 확인합니다.
 
 ### Demo Account
 
@@ -107,7 +113,7 @@ BizNote는 업무 노트, 회의록, 전시회 기록, 명함 정보를 관리�
 
 - Camera: 명함을 촬영하고 텍스트를 인식하기 위해 사용합니다.
 - Contacts: 검토한 명함 정보를 연락처에 저장하고 중복 여부를 확인하기 위해 사용합니다.
-- Calendars: 행사 또는 회의 일정을 캘린더에 추가하기 위해 사용합니다.
+- Calendars: 행사와 업무일지의 주요 행사를 사용자가 선택한 캘린더에 추가하기 위해 사용합니다.
 - Reminders: 업무 항목을 미리알림에 추가하기 위해 사용합니다.
 - Location: 회의 장소를 지도에서 찾기 위해 사용합니다.
 - User Selected Files: 사용자가 선택한 위치로 PDF 또는 스프레드시트 파일을 내보내기 위해 사용합니다.
@@ -144,7 +150,7 @@ Recommended screenshots:
 
 ## Build Upload
 
-Use the Xcode 26 Mac that successfully archives this project.
+Sign in to the Apple Developer account for the project team in Xcode > Settings > Accounts before creating the signed archive.
 
 Archive for App Store Connect:
 
@@ -168,7 +174,7 @@ xcodebuild -exportArchive \
     -allowProvisioningUpdates
 ```
 
-After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.0` macOS version page.
+After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.1.0` macOS version page. Verify the selected build is `10` before adding it for review.
 
 ## Final Submit Checklist
 

@@ -7,7 +7,7 @@ struct CustomNoteTemplateView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             ForEach($data.sections) { $section in
                 CustomNoteSectionView(
                     section: $section,
@@ -25,17 +25,8 @@ private struct CustomNoteSectionView: View {
     let openEventWindow: () -> Void
 
     var body: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
-                    Image(systemName: section.kind.systemImage)
-                        .foregroundStyle(.secondary)
-                    Text(section.title.isEmpty ? section.kind.defaultTitle : section.title)
-                        .font(.callout.weight(.semibold))
-                }
-                content
-            }
-            .padding(.vertical, 4)
+        NoteTemplateSection(title: section.title.isEmpty ? section.kind.defaultTitle : section.title) {
+            content
         }
     }
 
@@ -47,8 +38,6 @@ private struct CustomNoteSectionView: View {
         case .achievement, .work:
             TextEditor(text: $section.text)
                 .frame(minHeight: 70)
-                .padding(6)
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
                 .scrollContentBackground(.hidden)
         case .attachments:
             attachmentsSection
@@ -65,25 +54,11 @@ private struct CustomNoteSectionView: View {
     }
 
     private var taskBoard: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ForEach(CustomNoteTask.Status.allCases) { status in
-                taskColumn(for: status)
-            }
-        }
-        .padding(6)
-        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
-    }
-
-    private func taskColumn(for status: CustomNoteTask.Status) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(status.localizedName)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            VStack(spacing: 6) {
-                ForEach($section.tasks) { $task in
-                    if task.status == status {
-                        taskRow($task)
-                    }
+        NoteTaskBoard(statuses: CustomNoteTask.Status.allCases, title: { $0.localizedName }) { status in
+            ForEach($section.tasks) { $task in
+                if task.status == status {
+                    taskRow($task)
+                    Divider()
                 }
             }
             Button {
@@ -94,13 +69,10 @@ private struct CustomNoteSectionView: View {
             .buttonStyle(.borderless)
             .font(.caption)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(8)
-        .background(Color.secondary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private func taskRow(_ task: Binding<CustomNoteTask>) -> some View {
-        HStack(alignment: .top, spacing: 6) {
+        HStack(alignment: .top, spacing: 8) {
             Menu {
                 ForEach(CustomNoteTask.Status.allCases) { status in
                     Button(status.localizedName) {
@@ -114,7 +86,7 @@ private struct CustomNoteSectionView: View {
             .fixedSize()
 
             TextField(String(localized: "template.workLog.item.placeholder"), text: task.title, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .font(.caption)
                 .lineLimit(1...)
 
@@ -125,12 +97,11 @@ private struct CustomNoteSectionView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(6)
-        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+        .padding(.vertical, 4)
     }
 
     private var attachmentsSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             ForEach(attachmentPaths, id: \.self) { path in
                 HStack {
                     Image(systemName: "doc.fill")
@@ -154,8 +125,8 @@ private struct CustomNoteSectionView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(6)
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+                .padding(.vertical, 4)
+                Divider()
             }
             Button {
                 addAttachment()
@@ -171,9 +142,10 @@ private struct CustomNoteSectionView: View {
             ForEach($section.participants) { $participant in
                 HStack(spacing: 8) {
                     TextField(String(localized: "template.meeting.participant.name", defaultValue: "이름"), text: $participant.name)
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(.plain)
+                    NoteInlineDivider()
                     TextField(String(localized: "template.meeting.participant.company", defaultValue: "회사"), text: $participant.company)
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(.plain)
                     Button {
                         section.participants.removeAll { $0.id == participant.id }
                     } label: {
@@ -181,6 +153,7 @@ private struct CustomNoteSectionView: View {
                     }
                     .buttonStyle(.plain)
                 }
+                Divider()
             }
             Button {
                 section.participants.append(CustomNoteParticipant())

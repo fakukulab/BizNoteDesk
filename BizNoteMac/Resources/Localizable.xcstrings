@@ -1714,6 +1714,17 @@
         }
       }
     },
+    "exhibitions.image.change" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "이미지 변경"
+          }
+        }
+      }
+    },
     "exhibitions.image.empty" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -1731,6 +1742,28 @@
         }
       }
     },
+    "exhibitions.image.help.change" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "클릭해서 이미지 교체 또는 삭제"
+          }
+        }
+      }
+    },
+    "exhibitions.image.help.upload" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "클릭해서 이미지 업로드"
+          }
+        }
+      }
+    },
     "exhibitions.image.remove" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -1744,6 +1777,17 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "이미지 삭제"
+          }
+        }
+      }
+    },
+    "exhibitions.image.replace" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "이미지 교체"
           }
         }
       }
@@ -2255,6 +2299,7 @@
       }
     },
     "list.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2491,6 +2536,134 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "복제"
+          }
+        }
+      }
+    },
+    "note.editor.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "본문"
+          }
+        }
+      }
+    },
+    "note.editor.bold" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bold"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "굵게"
+          }
+        }
+      }
+    },
+    "note.editor.bulletedList" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bulleted List"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "글머리 기호 목록"
+          }
+        }
+      }
+    },
+    "note.editor.heading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heading"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제목"
+          }
+        }
+      }
+    },
+    "note.editor.italic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Italic"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기울임꼴"
+          }
+        }
+      }
+    },
+    "note.editor.numberedList" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numbered List"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "번호 목록"
+          }
+        }
+      }
+    },
+    "note.editor.strikethrough" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strikethrough"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소선"
+          }
+        }
+      }
+    },
+    "note.editor.underline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Underline"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "밑줄"
           }
         }
       }
@@ -3401,8 +3574,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Adds events to the selected iCloud calendar."
+            "state" : "needs_review",
+            "value" : "Adds exhibitions and key work log events to the selected iCloud calendar."
           }
         },
         "ko" : {
@@ -3949,6 +4122,22 @@
         }
       }
     },
+    "task.category.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Message"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지"
+          }
+        }
+      }
+    },
     "task.status.done" : {
       "localizations" : {
         "en" : {
@@ -3981,6 +4170,22 @@
         }
       }
     },
+    "task.status.onHold" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On Hold"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보류"
+          }
+        }
+      }
+    },
     "task.status.todo" : {
       "localizations" : {
         "en" : {
@@ -3998,6 +4203,7 @@
       }
     },
     "template.exhibition.booth.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4129,7 +4335,7 @@
       }
     },
     "template.exhibition.contacts.add" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4158,6 +4364,22 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "행사 일자"
+          }
+        }
+      }
+    },
+    "template.exhibition.followUpTasks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow-Up Tasks"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "후속업무"
           }
         }
       }
@@ -4244,6 +4466,22 @@
         }
       }
     },
+    "template.exhibition.person.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Person"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사람"
+          }
+        }
+      }
+    },
     "template.exhibition.type.exhibitor" : {
       "localizations" : {
         "en" : {
@@ -4304,6 +4542,7 @@
       }
     },
     "template.meeting.action.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4383,6 +4622,22 @@
         }
       }
     },
+    "template.meeting.decisions.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decisions"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결정사항"
+          }
+        }
+      }
+    },
     "template.meeting.decisions.placeholder" : {
       "localizations" : {
         "en" : {
@@ -4411,6 +4666,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "논의 사항"
+          }
+        }
+      }
+    },
+    "template.meeting.discussion.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discussion"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "논의사항"
           }
         }
       }
@@ -4476,6 +4747,38 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "회의 링크 (Zoom, Teams 등)"
+          }
+        }
+      }
+    },
+    "template.meeting.onlinePhone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call Number"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 번호"
+          }
+        }
+      }
+    },
+    "template.meeting.participant.add.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attendee"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "참석자"
           }
         }
       }
@@ -4665,13 +4968,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select Assignee"
+            "value" : "Select"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "담당자 선택"
+            "value" : "선택"
           }
         }
       }
@@ -4821,6 +5124,7 @@
       }
     },
     "template.workLog.achievements" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4983,6 +5287,54 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Version %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "workLog.calendarSettings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar Sync Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캘린더 연동 설정"
+          }
+        }
+      }
+    },
+    "workLog.majorEvents" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key Events"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주요 행사"
+          }
+        }
+      }
+    },
+    "workLog.relatedMeetings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meetings on This Day"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "같은 날 회의록"
           }
         }
       }
