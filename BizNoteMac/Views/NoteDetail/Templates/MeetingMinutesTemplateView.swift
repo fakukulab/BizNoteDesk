@@ -59,7 +59,13 @@ struct MeetingMinutesTemplateView: View {
             }
 
             NoteTemplateSection(title: String(localized: "template.meeting.agenda")) {
-                AutoHeightTextEditor(text: $data.agenda, minHeight: 60)
+                NoteMemoEditor(
+                    text: $data.agenda,
+                    rtf: .constant(""),
+                    accessibilityTitle: String(localized: "template.meeting.agenda"),
+                    bulletOnly: true
+                )
+                .frame(minHeight: 72)
                     .scrollContentBackground(.hidden)
             }
 

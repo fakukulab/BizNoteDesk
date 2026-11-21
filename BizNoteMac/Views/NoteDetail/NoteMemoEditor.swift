@@ -5,6 +5,7 @@ struct NoteMemoEditor: NSViewRepresentable {
     @Binding var text: String
     @Binding var rtf: String
     var accessibilityTitle = String(localized: "note.freeMemo")
+    var bulletOnly = false
 
     func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
 
@@ -30,7 +31,7 @@ struct NoteMemoEditor: NSViewRepresentable {
         coordinator.editor = editor
         coordinator.load()
 
-        let toolbar = NSStackView(views: [
+        let toolbar = NSStackView(views: bulletOnly ? [] : [
             formatButton("bold", title: String(localized: "note.editor.bold", defaultValue: "굵게"),
                          action: #selector(Coordinator.bold), target: coordinator),
             formatButton("italic", title: String(localized: "note.editor.italic", defaultValue: "기울임꼴"),
@@ -50,7 +51,7 @@ struct NoteMemoEditor: NSViewRepresentable {
         ])
         toolbar.spacing = 8
 
-        let stack = NSStackView(views: [toolbar, scrollView])
+        let stack = NSStackView(views: bulletOnly ? [scrollView] : [toolbar, scrollView])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 4
@@ -109,11 +110,64 @@ struct NoteMemoEditor: NSViewRepresentable {
             loadedText = parent.text
             loadedRTF = parent.rtf
 
+            if parent.bulletOnly {
+                let style = NSMutableParagraphStyle()
+                style.lineSpacing = 4
+                style.paragraphSpacing = 4
+                style.headIndent = 12
+                let attributes: [NSAttributedString.Key: Any] = [
+                    .font: NSFont.preferredFont(forTextStyle: .body),
+                    .foregroundColor: NSColor.labelColor,
+                    .paragraphStyle: style
+                ]
+                let lines = parent.text.replacingOccurrences(of: "\r\n", with: "\n")
+                    .components(separatedBy: .newlines)
+                let display = lines.map { "• " + $0 }.joined(separator: "\n")
+                let selection = editor.selectedRange()
+                editor.textStorage?.setAttributedString(NSAttributedString(string: display, attributes: attributes))
+                editor.setSelectedRange(NSRange(location: min(max(2, selection.location), (display as NSString).length), length: 0))
+                editor.typingAttributes = attributes
+                return
+            }
+
             editor.textStorage?.setAttributedString(NoteMemoEditor.displayText(parent.text, rtf: parent.rtf))
             editor.typingAttributes = [
                 .font: NSFont.preferredFont(forTextStyle: .body),
                 .foregroundColor: NSColor.labelColor
             ]
+        }
+
+        private var insertingBullet = false
+
+        func textView(_ editor: NSTextView, shouldChangeTextIn range: NSRange, replacementString: String?) -> Bool {
+            guard parent.bulletOnly, !insertingBullet, let replacementString,
+                  editor.undoManager?.isUndoing != true, editor.undoManager?.isRedoing != true else { return true }
+            let lines = replacementString
+                .replacingOccurrences(of: "\r\n", with: "\n")
+                .components(separatedBy: .newlines)
+            let text = editor.string as NSString
+            let start = text.lineRange(for: NSRange(location: range.location, length: 0)).location
+            let protectedEnd = text.substring(from: start).hasPrefix("• ") ? start + 2 : start
+            var editRange = NSRange(location: max(range.location, protectedEnd), length: 0)
+            editRange.length = max(0, NSMaxRange(range) - editRange.location)
+
+            if replacementString.isEmpty, range.length == 1, start > 0,
+               range.location == start + 1, editor.selectedRange().location == protectedEnd {
+                // Backspace at the start of an item joins it to the previous item.
+                editRange = NSRange(location: start - 1, length: 3)
+            } else if range.length > 0, NSMaxRange(range) < text.length,
+                      text.substring(with: NSRange(location: NSMaxRange(range) - 1, length: 1)) == "\n",
+                      text.substring(from: NSMaxRange(range)).hasPrefix("• ") {
+                editRange.length += 2
+            }
+
+            let replacement = lines.joined(separator: "\n• ")
+            guard editRange != range || replacement != replacementString else { return true }
+            guard editRange.length > 0 || !replacement.isEmpty else { return false }
+            insertingBullet = true
+            editor.insertText(replacement, replacementRange: editRange)
+            insertingBullet = false
+            return false
         }
 
         func textDidChange(_ notification: Notification) {
@@ -161,7 +215,7 @@ struct NoteMemoEditor: NSViewRepresentable {
         private static let numberPattern = #"^[0-9]+\.[ \t]+"#
 
         func textView(_ editor: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
-            guard commandSelector == #selector(NSResponder.insertNewline(_:)) else { return false }
+            guard !parent.bulletOnly, commandSelector == #selector(NSResponder.insertNewline(_:)) else { return false }
             let selection = editor.selectedRange()
             guard selection.length == 0 else { return false }
 
@@ -275,6 +329,14 @@ struct NoteMemoEditor: NSViewRepresentable {
 
         private func persist() {
             guard let editor, let storage = editor.textStorage else { return }
+            if parent.bulletOnly {
+                let text = storage.string.components(separatedBy: "\n")
+                    .map { $0.hasPrefix("• ") ? String($0.dropFirst(2)) : $0 }
+                    .joined(separator: "\n")
+                loadedText = text
+                if parent.text != text { parent.text = text }
+                return
+            }
             let text = storage.string
             let range = NSRange(location: 0, length: storage.length)
             let rtf = storage.rtf(from: range, documentAttributes: [:])?.base64EncodedString() ?? ""

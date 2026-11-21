@@ -153,9 +153,8 @@ struct WorkLogTemplateView: View {
     @ViewBuilder
     private func labeledEditor(_ title: String, text: Binding<String>) -> some View {
         NoteTemplateSection(title: title) {
-            TextEditor(text: text)
-                .frame(minHeight: 60)
-                .scrollContentBackground(.hidden)
+            NoteMemoEditor(text: text, rtf: .constant(""), accessibilityTitle: title, bulletOnly: true)
+                .frame(minHeight: 72)
         }
     }
 

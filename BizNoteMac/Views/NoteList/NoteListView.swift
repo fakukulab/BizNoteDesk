@@ -396,28 +396,13 @@ struct NoteListRow: View {
                             .font(.caption)
                     }
                 }
-                previewText
+                Text(note.tags.isEmpty ? " " : note.tags.joined(separator: ", "))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .lineLimit(2)
-                    .opacity(note.content.isEmpty ? 0 : 1)
-                HStack(spacing: 6) {
-                    Text(note.contentDate, format: .dateTime.year().month().day().hour().minute())
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                    if !note.tags.isEmpty {
-                        Text("• " + note.tags.prefix(3).joined(separator: ", "))
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                            .lineLimit(1)
-                    }
-                }
+                    .lineLimit(1, reservesSpace: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, 3)
-    }
-
-    private var previewText: Text {
-        Text(note.content.isEmpty ? " " : note.content)
+        .padding(.vertical, 4)
     }
 }

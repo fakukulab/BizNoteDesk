@@ -4,8 +4,8 @@
 
 - Platform: macOS
 - Bundle ID: `com.fakuku.biznote.mac`
-- Version: `1.1.0`
-- Build: `10`
+- Version: `1.1.1`
+- Build: `11`
 - Price: Free
 - Release mode: Automatic release after approval
 - Primary metadata language: Korean
@@ -65,17 +65,13 @@ BizNote는 반복되는 업무 기록을 간결하게 정리하고, 현장에서
 
 **한국어**
 
-- 노트, 명함, 행사 관리 화면을 macOS 스타일로 정리했습니다. 노트와 행사 추가 화면은 입력칸 테두리를 줄이고 항목을 구분선으로 나눴습니다.
-- 업무일지에 주요 행사와 캘린더 연동을 추가했습니다. 진행 중이거나 보류한 업무는 다음 업무일지에 자동으로 복사되며, 같은 날의 회의록을 업무일지에서 열 수 있습니다.
-- 회의록과 행사 노트의 업무에 메시지 분류를 추가했습니다. 온라인 회의록에는 통화 번호를 기록할 수 있습니다.
-- 노트 메모와 행사 소개·전시품목에 제목, 취소선, 글머리 기호 및 번호 목록 서식을 추가했습니다.
+- 노트 목록의 행 높이를 통일했습니다. 제목 아래에 태그를 표시하고 메모 미리보기를 제거했습니다.
+- 업무일지의 완료, 이슈, 다음 할 일과 회의록의 안건을 글머리 기호 목록으로 입력할 수 있습니다. 줄과 항목 사이 간격도 조정했습니다.
 
 **English**
 
-- Refined the macOS interface for notes, business cards, and events, with cleaner note and event entry forms.
-- Added key events with Calendar sync to work logs. In-progress and on-hold tasks carry forward to the next work log, and you can open meeting minutes from the same day.
-- Added a Message task category to meeting minutes and event notes, plus a call number field for online meetings.
-- Added headings, strikethrough, bulleted lists, and numbered lists to note memos and event descriptions.
+- Note rows now have a consistent height and show tags below the title. Memo previews have been removed.
+- Work log accomplishments, issues, next tasks, and meeting agendas now use bulleted editors with more space between lines and items.
 
 ### Support URL
 
@@ -174,7 +170,7 @@ xcodebuild -exportArchive \
     -allowProvisioningUpdates
 ```
 
-After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.1.0` macOS version page. Verify the selected build is `10` before adding it for review.
+After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.1.1` macOS version page. Verify the selected build is `11` before adding it for review.
 
 ## Final Submit Checklist
 
