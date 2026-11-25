@@ -279,7 +279,7 @@ struct BusinessCardManagerView: View {
         guard !cardsToDelete.isEmpty else { return }
 
         for card in cardsToDelete {
-            AttachmentStorage.removeCardImage(path: card.imagePath)
+            AttachmentStorage.removeCardImage(path: card.imagePath, id: card.id)
             context.delete(card)
         }
 

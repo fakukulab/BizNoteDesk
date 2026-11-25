@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 struct NoteMemoEditor: NSViewRepresentable {
+    @Environment(\.isEnabled) private var isEnabled
     @Binding var text: String
     @Binding var rtf: String
     var accessibilityTitle = String(localized: "note.freeMemo")
@@ -15,7 +16,7 @@ struct NoteMemoEditor: NSViewRepresentable {
         editor.delegate = context.coordinator
         editor.isRichText = true
         editor.importsGraphics = false
-        editor.allowsUndo = true
+        editor.allowsUndo = isEnabled
         editor.drawsBackground = false
         editor.textColor = .labelColor
         editor.textContainerInset = NSSize(width: 0, height: 4)
@@ -49,6 +50,8 @@ struct NoteMemoEditor: NSViewRepresentable {
             formatButton("list.number", title: String(localized: "note.editor.numberedList", defaultValue: "번호 목록"),
                          action: #selector(Coordinator.numbers), target: coordinator)
         ])
+        editor.isEditable = isEnabled
+        toolbar.isHidden = !isEnabled
         toolbar.spacing = 8
 
         let stack = NSStackView(views: bulletOnly ? [scrollView] : [toolbar, scrollView])
@@ -60,8 +63,14 @@ struct NoteMemoEditor: NSViewRepresentable {
     }
 
     func updateNSView(_ view: NSStackView, context: Context) {
-        context.coordinator.parent = self
-        context.coordinator.load()
+        let coordinator = context.coordinator
+        coordinator.parent = self
+        coordinator.editor?.isEditable = isEnabled
+        coordinator.editor?.allowsUndo = isEnabled
+        if !bulletOnly {
+            view.arrangedSubviews.first?.isHidden = !isEnabled
+        }
+        coordinator.load()
     }
 
     private func formatButton(_ symbol: String, title: String, action: Selector, target: Coordinator) -> NSButton {
@@ -100,13 +109,16 @@ struct NoteMemoEditor: NSViewRepresentable {
         weak var editor: NSTextView?
         private var loadedText: String?
         private var loadedRTF: String?
+        private var loadedIsEnabled: Bool?
 
         init(parent: NoteMemoEditor) {
             self.parent = parent
         }
 
         func load() {
-            guard let editor, loadedText != parent.text || loadedRTF != parent.rtf else { return }
+            guard let editor,
+                  loadedText != parent.text || loadedRTF != parent.rtf || loadedIsEnabled != parent.isEnabled else { return }
+            loadedIsEnabled = parent.isEnabled
             loadedText = parent.text
             loadedRTF = parent.rtf
 
@@ -122,7 +134,9 @@ struct NoteMemoEditor: NSViewRepresentable {
                 ]
                 let lines = parent.text.replacingOccurrences(of: "\r\n", with: "\n")
                     .components(separatedBy: .newlines)
-                let display = lines.map { "• " + $0 }.joined(separator: "\n")
+                let display = !parent.isEnabled && parent.text.isEmpty
+                    ? ""
+                    : lines.map { "• " + $0 }.joined(separator: "\n")
                 let selection = editor.selectedRange()
                 editor.textStorage?.setAttributedString(NSAttributedString(string: display, attributes: attributes))
                 editor.setSelectedRange(NSRange(location: min(max(2, selection.location), (display as NSString).length), length: 0))
@@ -328,7 +342,7 @@ struct NoteMemoEditor: NSViewRepresentable {
         }
 
         private func persist() {
-            guard let editor, let storage = editor.textStorage else { return }
+            guard let editor, editor.isEditable, let storage = editor.textStorage else { return }
             if parent.bulletOnly {
                 let text = storage.string.components(separatedBy: "\n")
                     .map { $0.hasPrefix("• ") ? String($0.dropFirst(2)) : $0 }

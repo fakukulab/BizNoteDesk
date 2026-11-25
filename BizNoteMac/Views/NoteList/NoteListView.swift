@@ -257,7 +257,7 @@ struct NoteListView: View {
                 .help(String(localized: "noteList.selection.toggle", defaultValue: "노트 선택"))
             }
 
-            NoteListRow(note: note)
+            NoteListRow(note: note, showsCreationDate: sort == .createdDesc)
         }
         .contentShape(Rectangle())
     }
@@ -380,29 +380,60 @@ struct NoteListView: View {
 
 struct NoteListRow: View {
     let note: Note
+    var showsCreationDate = false
+
+    private var showsCreatedAt: Bool { showsCreationDate || note.createdAt >= note.updatedAt }
+    private var date: Date { showsCreatedAt ? note.createdAt : note.updatedAt }
+    private var dateLabel: String {
+        showsCreatedAt
+            ? String(localized: "noteList.date.created", defaultValue: "생성일")
+            : String(localized: "noteList.date.updated", defaultValue: "수정일")
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: note.categoryIconName)
                 .foregroundStyle(note.categoryAccentColor)
                 .frame(width: 20)
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
-                        .font(.headline)
-                        .lineLimit(1)
-                    if note.isFavorite {
-                        Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow)
-                            .font(.caption)
+            VStack(alignment: .leading, spacing: 4) {
+                rowLine(.headline) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
+                            .font(.headline)
+                            .lineLimit(1)
+                        if note.isFavorite {
+                            Image(systemName: "star.fill")
+                                .foregroundStyle(.yellow)
+                                .font(.caption)
+                        }
+                        Text(date, format: .dateTime.year().month(.twoDigits).day(.twoDigits))
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .fixedSize()
+                            .accessibilityLabel(Text(dateLabel + " " + date.formatted(.dateTime.year().month().day())))
+                            .help(dateLabel + " " + date.formatted(.dateTime.year().month().day().hour().minute()))
                     }
                 }
-                Text(note.tags.isEmpty ? " " : note.tags.joined(separator: ", "))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1, reservesSpace: true)
+
+                rowLine(.caption) {
+                    Text(note.tags.joined(separator: ", "))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, 4)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func rowLine<Content: View>(_ font: Font, @ViewBuilder content: () -> Content) -> some View {
+        // Measure a full line even when a new note has no title or tags yet.
+        Text(verbatim: "Ag")
+            .font(font)
+            .hidden()
+            .accessibilityHidden(true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .overlay(alignment: .leading, content: content)
     }
 }

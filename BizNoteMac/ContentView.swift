@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var context
     @State private var selectedCategory: SidebarSelection? = .allNotes
     @State private var selectedNote: Note? = nil
+    @State private var newNoteID: UUID?
     @State private var selectedCard: BusinessCard? = nil
     @State private var selectedPreset: ExhibitionPreset? = nil
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
@@ -59,7 +60,7 @@ struct ContentView: View {
             } else if let note = selectedNote {
                 Group {
                     if showsCardPanel(note) {
-                        NoteDetailView(note: note, onOpenMeeting: openMeeting)
+                        noteDetail(for: note)
                             .inspector(isPresented: $showCardInspector) {
                                 BusinessCardPanelView(note: note)
                                     .inspectorColumnWidth(min: 300, ideal: 360, max: 460)
@@ -76,7 +77,7 @@ struct ContentView: View {
                                 }
                             }
                     } else {
-                        NoteDetailView(note: note, onOpenMeeting: openMeeting)
+                        noteDetail(for: note)
                     }
                 }
                 .id(note.id)
@@ -112,6 +113,15 @@ struct ContentView: View {
         .sheet(isPresented: $showExportSheet) {
             ExportSheetView()
         }
+    }
+
+    private func noteDetail(for note: Note) -> some View {
+        NoteDetailView(note: note, startsEditing: newNoteID == note.id, onOpenMeeting: openMeeting)
+            .onAppear {
+                if newNoteID == note.id {
+                    newNoteID = nil
+                }
+            }
     }
 
     /// Business card scanning is only offered for meeting minutes, exhibition,
@@ -166,6 +176,7 @@ struct ContentView: View {
         }
         context.insert(note)
         try? context.save()
+        newNoteID = note.id
         selectedNote = note
     }
 }

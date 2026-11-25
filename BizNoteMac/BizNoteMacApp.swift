@@ -1,9 +1,11 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 @main
 struct BizNoteMacApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @Environment(\.scenePhase) private var scenePhase
     let container: ModelContainer
     @AppStorage("theme") private var theme: String = "system"
 
@@ -35,6 +37,17 @@ struct BizNoteMacApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task(id: scenePhase) {
+                    guard scenePhase == .active else { return }
+                    let imageContainer = container
+                    await Task.detached(priority: .utility) {
+                        do {
+                            try BusinessCard.backfillImageData(in: imageContainer)
+                        } catch {
+                            Logger().error("Business card image backfill failed: \(error.localizedDescription, privacy: .private)")
+                        }
+                    }.value
+                }
                 .background(Color(nsColor: .windowBackgroundColor))
                 .preferredColorScheme(colorScheme)
         }

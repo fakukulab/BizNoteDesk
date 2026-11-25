@@ -2,31 +2,36 @@ import SwiftUI
 
 struct TagEditorView: View {
     @Binding var tags: [String]
+    var isEditing = true
     @State private var input: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "tag")
-                    .foregroundStyle(.secondary)
-                TextField(String(localized: "tags.add.placeholder"), text: $input)
-                    .textFieldStyle(.plain)
-                    .onSubmit(addTag)
-                Button(String(localized: "tags.add")) { addTag() }
-                    .disabled(input.trimmingCharacters(in: .whitespaces).isEmpty)
+            if isEditing {
+                HStack {
+                    Image(systemName: "tag")
+                        .foregroundStyle(.secondary)
+                    TextField(String(localized: "tags.add.placeholder"), text: $input)
+                        .textFieldStyle(.plain)
+                        .onSubmit(addTag)
+                    Button(String(localized: "tags.add")) { addTag() }
+                        .disabled(input.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
             }
             if !tags.isEmpty {
                 FlowLayout(spacing: 6) {
                     ForEach(tags, id: \.self) { tag in
                         HStack(spacing: 4) {
                             Text(tag).font(.caption)
-                            Button {
-                                tags.removeAll { $0 == tag }
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.secondary)
+                            if isEditing {
+                                Button {
+                                    tags.removeAll { $0 == tag }
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.secondary)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)

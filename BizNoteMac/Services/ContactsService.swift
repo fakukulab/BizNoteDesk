@@ -62,7 +62,13 @@ enum ContactsService {
 
 extension CNContact {
     var displayName: String {
-        let full = [givenName, familyName].filter { !$0.isEmpty }.joined(separator: " ")
+        displayName(language: Locale.Language(identifier: "en"))
+    }
+
+    func displayName(language: Locale.Language) -> String {
+        let isKorean = language.languageCode == .korean
+        let parts = isKorean ? [familyName, givenName] : [givenName, familyName]
+        let full = parts.filter { !$0.isEmpty }.joined(separator: isKorean ? "" : " ")
         return full.isEmpty ? organizationName : full
     }
     var primaryPhone: String { phoneNumbers.first?.value.stringValue ?? "" }

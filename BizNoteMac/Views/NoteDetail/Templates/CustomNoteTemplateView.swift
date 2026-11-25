@@ -4,6 +4,7 @@ import AppKit
 struct CustomNoteTemplateView: View {
     @Binding var data: CustomNoteTemplateData
     @Binding var attachmentPaths: [String]
+    var isEditing = true
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -12,6 +13,7 @@ struct CustomNoteTemplateView: View {
                 CustomNoteSectionView(
                     section: $section,
                     attachmentPaths: $attachmentPaths,
+                    isEditing: isEditing,
                     openEventWindow: { openWindow(id: "new-exhibition") }
                 )
             }
@@ -22,11 +24,13 @@ struct CustomNoteTemplateView: View {
 private struct CustomNoteSectionView: View {
     @Binding var section: CustomNoteTemplateSection
     @Binding var attachmentPaths: [String]
+    let isEditing: Bool
     let openEventWindow: () -> Void
 
     var body: some View {
         NoteTemplateSection(title: section.title.isEmpty ? section.kind.defaultTitle : section.title) {
             content
+                .disabled(!isEditing && section.kind != .attachments)
         }
     }
 
@@ -124,6 +128,7 @@ private struct CustomNoteSectionView: View {
                         Image(systemName: "minus.circle")
                     }
                     .buttonStyle(.plain)
+                    .disabled(!isEditing)
                 }
                 .padding(.vertical, 4)
                 Divider()
@@ -134,6 +139,7 @@ private struct CustomNoteSectionView: View {
                 Label(String(localized: "template.workLog.attachments.add", defaultValue: "파일 추가"), systemImage: "paperclip")
             }
             .buttonStyle(.borderless)
+            .disabled(!isEditing)
         }
     }
 

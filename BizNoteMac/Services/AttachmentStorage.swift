@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 
 enum AttachmentStorage {
-    static var cardsDirectory: URL? {
+    private static var cardsDirectory: URL? {
         let fm = FileManager.default
         if UserDefaults.standard.bool(forKey: "icloud.syncBackupEnabled"),
            let ubiquityBase = fm.url(forUbiquityContainerIdentifier: "iCloud.com.fakuku.biznote") {
@@ -23,9 +23,8 @@ enum AttachmentStorage {
     }
 
     @discardableResult
-    static func saveCardImage(_ image: NSImage, id: UUID) -> String? {
-        guard let dir = cardsDirectory,
-              let data = image.pngData() else { return nil }
+    static func saveCardImage(_ data: Data, id: UUID) -> String? {
+        guard let dir = cardsDirectory else { return nil }
         let url = dir.appendingPathComponent("\(id.uuidString).png")
         do {
             try data.write(to: url, options: .atomic)
@@ -35,14 +34,39 @@ enum AttachmentStorage {
         }
     }
 
-    static func loadCardImage(path: String) -> NSImage? {
-        guard !path.isEmpty else { return nil }
-        return NSImage(contentsOfFile: path)
+    static func cardImageData(path: String, id: UUID) -> Data? {
+        guard let url = legacyCardImageURL(path: path, id: id) else { return nil }
+        let fm = FileManager.default
+        if fm.isUbiquitousItem(at: url),
+           let values = try? url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey]),
+           values.ubiquitousItemDownloadingStatus == .notDownloaded {
+            try? fm.startDownloadingUbiquitousItem(at: url)
+            return nil
+        }
+        return try? Data(contentsOf: url)
     }
 
-    static func removeCardImage(path: String) {
-        guard !path.isEmpty else { return }
-        try? FileManager.default.removeItem(atPath: path)
+    static func removeCardImage(path: String, id: UUID) {
+        guard let url = legacyCardImageURL(path: path, id: id) else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
+
+    private static func legacyCardImageURL(path: String, id: UUID) -> URL? {
+        let filename = "\(id.uuidString).png"
+        guard path.hasPrefix("/"), URL(fileURLWithPath: path).lastPathComponent == filename else {
+            return nil
+        }
+        let fm = FileManager.default
+        let localURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("BizNote/BusinessCards/\(filename)")
+        if let localURL, fm.fileExists(atPath: localURL.path) {
+            return localURL
+        }
+        guard path.hasSuffix("/Documents/BizNote/BusinessCards/\(filename)"),
+              let base = fm.url(forUbiquityContainerIdentifier: "iCloud.com.fakuku.biznote") else {
+            return nil
+        }
+        return base.appendingPathComponent("Documents/BizNote/BusinessCards/\(filename)")
     }
 
     static var exhibitionLogosDirectory: URL? {

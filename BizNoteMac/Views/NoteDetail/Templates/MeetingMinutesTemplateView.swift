@@ -171,9 +171,12 @@ struct MeetingMinutesTemplateView: View {
                       text: person.company)
                 .textFieldStyle(.plain)
                 .padding(.vertical, 2)
-            CardLinkButton(cards: businessCards, onSelect: { card in applyCard(card, to: person) })
-            ContactPickerButton(onSelect: { contact in applyContact(contact, to: person) },
-                                title: String(localized: "contacts.import.short", defaultValue: "주소록"))
+            let availableCards = availableCards(for: person.wrappedValue.id)
+            CardLinkButton(cards: availableCards, onSelect: { card in applyCard(card, to: person) })
+                .disabled(!businessCards.isEmpty && availableCards.isEmpty)
+            ContactPickerButton(onSelect: { contact in applyContact(contact, to: person) })
+                .frame(width: 20, height: 20)
+                .help(String(localized: "contacts.import", defaultValue: "주소록에서 불러오기"))
             Button {
                 data.participants.removeAll { $0.id == person.wrappedValue.id }
             } label: { Image(systemName: "minus.circle") }
@@ -182,8 +185,17 @@ struct MeetingMinutesTemplateView: View {
         .padding(.vertical, 4)
     }
 
+    private func availableCards(for participantID: UUID) -> [BusinessCard] {
+        let linkedCardIDs = Set(data.participants.lazy
+            .filter { $0.id != participantID }
+            .compactMap(\.linkedCardID))
+        return businessCards.filter { !linkedCardIDs.contains($0.id) }
+    }
+
     private func applyContact(_ contact: CNContact, to person: Binding<MeetingMinutesTemplateData.Participant>) {
-        person.wrappedValue.name = contact.displayName
+        let appLanguage = Bundle.main.preferredLocalizations.first ?? "en"
+        person.wrappedValue.name = contact.displayName(language: Locale(identifier: appLanguage).language)
+        person.wrappedValue.linkedCardID = nil
         person.wrappedValue.company = contact.organizationName
         person.wrappedValue.jobTitle = contact.jobTitle
         person.wrappedValue.phone = contact.primaryPhone
@@ -191,6 +203,7 @@ struct MeetingMinutesTemplateView: View {
     }
 
     private func applyCard(_ card: BusinessCard, to person: Binding<MeetingMinutesTemplateData.Participant>) {
+        guard availableCards(for: person.wrappedValue.id).contains(where: { $0.id == card.id }) else { return }
         person.wrappedValue.name = card.name
         person.wrappedValue.company = card.company
         person.wrappedValue.jobTitle = card.jobTitle

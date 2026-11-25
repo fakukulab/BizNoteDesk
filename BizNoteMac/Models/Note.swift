@@ -122,7 +122,7 @@ final class Note {
         self.categoryRaw = category.rawValue
         self.content = content
         self.createdAt = Date()
-        self.updatedAt = Date()
+        self.updatedAt = self.createdAt
         self.tags = []
         switch category {
         case .workLog:
@@ -152,7 +152,7 @@ final class Note {
         self.categoryRaw = Note.customCategoryRawValue
         self.content = content
         self.createdAt = Date()
-        self.updatedAt = Date()
+        self.updatedAt = self.createdAt
         self.tags = []
         self.templateData = "{}"
         self.businessCards = []

@@ -5,6 +5,7 @@ struct WorkLogTemplateView: View {
     @Binding var data: WorkLogTemplateData
     @Binding var attachmentPaths: [String]
     @AppStorage("integration.syncEventsWithCalendar") private var syncEventsWithCalendar = false
+    var isEditing = true
     var meetings: [Note] = []
     var onOpenMeeting: (Note) -> Void = { _ in }
 
@@ -44,6 +45,7 @@ struct WorkLogTemplateView: View {
                     .font(.caption)
                 }
             }
+            .disabled(!isEditing)
 
             labeledEditor(String(localized: "task.status.done"), text: $data.achievements)
             labeledEditor(String(localized: "template.workLog.issues"), text: $data.issues)
@@ -71,6 +73,7 @@ struct WorkLogTemplateView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel(String(localized: "action.delete", defaultValue: "삭제"))
                     }
+                    .disabled(!isEditing)
                     Divider()
                 }
                 Button {
@@ -79,6 +82,7 @@ struct WorkLogTemplateView: View {
                     Label(String(localized: "exhibitions.add", defaultValue: "행사 추가"), systemImage: "plus")
                 }
                 .buttonStyle(.borderless)
+                .disabled(!isEditing)
 
                 if !syncEventsWithCalendar && !data.majorEvents.isEmpty {
                     SettingsLink {
@@ -155,6 +159,7 @@ struct WorkLogTemplateView: View {
         NoteTemplateSection(title: title) {
             NoteMemoEditor(text: text, rtf: .constant(""), accessibilityTitle: title, bulletOnly: true)
                 .frame(minHeight: 72)
+                .disabled(!isEditing)
         }
     }
 
@@ -181,6 +186,7 @@ struct WorkLogTemplateView: View {
                             removeAttachment(path)
                         } label: { Image(systemName: "minus.circle") }
                         .buttonStyle(.plain)
+                        .disabled(!isEditing)
                     }
                     .padding(.vertical, 4)
                     Divider()
@@ -192,6 +198,7 @@ struct WorkLogTemplateView: View {
                           systemImage: "paperclip")
                 }
                 .buttonStyle(.borderless)
+                .disabled(!isEditing)
             }
             .padding(.vertical, 4)
         }

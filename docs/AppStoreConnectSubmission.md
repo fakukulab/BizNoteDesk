@@ -4,8 +4,8 @@
 
 - Platform: macOS
 - Bundle ID: `com.fakuku.biznote.mac`
-- Version: `1.1.1`
-- Build: `11`
+- Version: `1.1.2`
+- Build: `13`
 - Price: Free
 - Release mode: Automatic release after approval
 - Primary metadata language: Korean
@@ -65,13 +65,19 @@ BizNote는 반복되는 업무 기록을 간결하게 정리하고, 현장에서
 
 **한국어**
 
-- 노트 목록의 행 높이를 통일했습니다. 제목 아래에 태그를 표시하고 메모 미리보기를 제거했습니다.
-- 업무일지의 완료, 이슈, 다음 할 일과 회의록의 안건을 글머리 기호 목록으로 입력할 수 있습니다. 줄과 항목 사이 간격도 조정했습니다.
+- 기존 노트는 읽기 상태로 열립니다. 연필 아이콘으로 편집을 시작하고 체크 아이콘으로 완료할 수 있습니다.
+- 노트 목록 제목 옆에 수정일 또는 생성일을 표시합니다. 제목이나 태그가 비어 있는 새 노트도 기존 노트와 같은 높이로 표시됩니다.
+- 명함 관리 입력란을 왼쪽으로 정렬했습니다.
+- 한국어 회의록에서 주소록으로 가져온 이름을 성부터 표시합니다. 주소록 버튼을 아이콘으로 바꾸고, 같은 명함을 여러 참석자에게 중복 연결하지 않도록 했습니다.
+- 명함 사진 동기화는 이 기능을 지원하는 BizNote iOS 버전과 같은 iCloud 계정에서 사용할 수 있습니다.
 
 **English**
 
-- Note rows now have a consistent height and show tags below the title. Memo previews have been removed.
-- Work log accomplishments, issues, next tasks, and meeting agendas now use bulleted editors with more space between lines and items.
+- Existing notes open in reading mode. Select the pencil to edit and the checkmark to finish.
+- The note list shows the modified or created date next to each title. New notes with an empty title or no tags have the same row height as existing notes.
+- Business card text fields are left-aligned.
+- Korean meeting minutes show imported names with the family name first. Contact import uses an icon, and a scanned card can be linked to one attendee.
+- Card photo sync requires a compatible BizNote iOS version and the same iCloud account on both devices.
 
 ### Support URL
 
@@ -100,6 +106,15 @@ App Store Connect에 저장된 심사 연락 담당자의 이름, 전화번호, 
 Not required.
 
 ### Notes
+
+**1.1.2 (13) 변경 및 확인 방법**
+
+- 노트 목록에서 새 노트를 만들면 바로 편집할 수 있습니다. 비어 있는 새 노트도 기존 노트와 행 높이가 같습니다. 각 제목 옆에는 수정일이 표시되며, 생성일순 정렬에서는 생성일이 표시됩니다.
+- 기존 노트를 다시 열면 읽기 상태입니다. 우측 상단 연필 버튼으로 제목, 날짜, 본문, 템플릿, 태그를 편집할 수 있습니다. 변경 내용은 자동 저장되며 체크 버튼으로 편집을 종료합니다.
+- 명함 관리에서 이름, 회사, 직급 등 텍스트 입력 내용이 왼쪽에 정렬됩니다.
+- 한국어 설정의 회의록에서 주소록 아이콘으로 참석자를 불러오면 이름을 성부터 표시합니다. 스캔한 명함을 연결한 뒤 다른 참석자에게 쓸 수 있는 명함이 없으면 해당 행의 명함 아이콘이 비활성화됩니다.
+- 명함 사진 데이터용 CloudKit 운영 스키마를 배포했습니다. 같은 iCloud 계정으로 Mac과 iPad에서 사진 동기화 코드가 들어간 개발 빌드를 실행해 합성 명함 사진을 양방향으로 확인했습니다. iPhone·iPad의 App Store 버전에서도 사진 동기화를 사용하려면 해당 코드를 포함한 BizNote iOS 업데이트가 필요합니다.
+
 
 BizNote는 업무 노트, 회의록, 전시회 기록, 명함 정보를 관리하는 macOS 생산성 앱입니다.
 
@@ -144,6 +159,11 @@ Recommended screenshots:
 4. Exhibition management screen
 5. Export or iCloud settings screen
 
+## CloudKit 배포 확인
+
+- 공유 컨테이너 `iCloud.com.fakuku.biznote`의 `CD_BusinessCard` 사진 데이터와 Asset 필드를 Production에 배포했습니다.
+- Mac과 iPad 개발 빌드에서 신규 명함 사진의 양방향 동기화를 확인했습니다. 기존 명함 사진 보완은 로컬 테스트에서 확인했습니다.
+
 ## Build Upload
 
 Sign in to the Apple Developer account for the project team in Xcode > Settings > Accounts before creating the signed archive.
@@ -170,7 +190,7 @@ xcodebuild -exportArchive \
     -allowProvisioningUpdates
 ```
 
-After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.1.1` macOS version page. Verify the selected build is `11` before adding it for review.
+After upload, wait for App Store Connect processing to finish, then select the processed build in the `1.1.2` macOS version page. Verify the selected build is `13` before adding it for review.
 
 ## Final Submit Checklist
 

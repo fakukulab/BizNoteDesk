@@ -8,10 +8,33 @@ struct NoteDetailView: View {
     private var meetingNotes: [Note]
     @Environment(\.modelContext) private var context
 
+    @State private var isEditing: Bool
     @State private var workLog: WorkLogTemplateData = .init()
     @State private var meeting: MeetingMinutesTemplateData = .init()
     @State private var exhibition: ExhibitionTemplateData = .init()
     @State private var customTemplate: CustomNoteTemplateData = .init()
+
+    init(note: Note, startsEditing: Bool = false, onOpenMeeting: @escaping (Note) -> Void = { _ in }) {
+        self.note = note
+        self.onOpenMeeting = onOpenMeeting
+        _isEditing = State(initialValue: startsEditing)
+        if note.isCustomCategory {
+            let stored = TemplateCoder.decode(CustomNoteTemplateData.self, from: note.templateData)
+            let defaults = note.customCategory.flatMap {
+                TemplateCoder.decode(CustomNoteTemplateData.self, from: $0.templateData)
+            }
+            _customTemplate = State(initialValue: stored ?? defaults ?? .init())
+        } else {
+            switch note.category {
+            case .workLog:
+                _workLog = State(initialValue: note.workLogTemplate ?? .init())
+            case .meetingMinutes:
+                _meeting = State(initialValue: note.meetingTemplate ?? .init())
+            case .exhibition:
+                _exhibition = State(initialValue: note.exhibitionTemplate ?? .init())
+            }
+        }
+    }
 
     var body: some View {
         ScrollView {
@@ -28,12 +51,14 @@ struct NoteDetailView: View {
 
                 Divider()
 
-                TagEditorView(tags: $note.tags)
+                TagEditorView(tags: $note.tags, isEditing: isEditing)
             }
             .padding(20)
         }
         .navigationTitle(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
-        .onAppear(perform: loadTemplate)
+        .onChange(of: isEditing, initial: true) { _, editing in
+            if editing { updateWorkLogTitleIfNeeded() }
+        }
         .onChange(of: workLog) { old, new in
             save(template: new)
             updateWorkLogTitleIfNeeded()
@@ -64,6 +89,12 @@ struct NoteDetailView: View {
         .onChange(of: note.attachmentPaths) { _, _ in touch() }
     }
 
+    private var editActionTitle: String {
+        isEditing
+            ? String(localized: "note.edit.done", defaultValue: "편집 완료")
+            : String(localized: "note.edit.start", defaultValue: "노트 수정")
+    }
+
     private var isWorkLog: Bool { !note.isCustomCategory && note.category == .workLog }
     private var isMeeting: Bool { !note.isCustomCategory && note.category == .meetingMinutes }
     private var isExhibition: Bool { !note.isCustomCategory && note.category == .exhibition }
@@ -82,15 +113,27 @@ struct NoteDetailView: View {
                                     ? String(localized: "note.unfavorite")
                                     : String(localized: "note.favorite"))
 
-                if isWorkLog {
-                    Text(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
-                        .font(.title.weight(.semibold))
-                } else {
-                    TextField(String(localized: "note.title.placeholder"), text: $note.title)
-                        .font(.title.weight(.semibold))
-                        .textFieldStyle(.plain)
-                        .accessibilityLabel(String(localized: "note.title.placeholder"))
+                Group {
+                    if isEditing {
+                        TextField(String(localized: "note.title.placeholder"), text: $note.title)
+                            .textFieldStyle(.plain)
+                            .accessibilityLabel(String(localized: "note.title.placeholder"))
+                    } else {
+                        Text(note.title.isEmpty ? String(localized: "note.untitled") : note.title)
+                    }
                 }
+                .font(.title.weight(.semibold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Button {
+                    isEditing.toggle()
+                } label: {
+                    Label(editActionTitle, systemImage: isEditing ? "checkmark" : "pencil")
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.bordered)
+                .help(editActionTitle)
+                .accessibilityIdentifier("note.edit.toggle")
             }
 
             HStack(spacing: 8) {
@@ -99,17 +142,11 @@ struct NoteDetailView: View {
                     .font(.callout)
 
                 if isMeeting {
-                    DatePicker("", selection: $meeting.meetingDate)
-                        .labelsHidden()
-                        .font(.callout)
+                    noteDate($meeting.meetingDate, includesTime: true)
                 } else if isExhibition {
-                    DatePicker("", selection: $exhibition.participatingDate, displayedComponents: .date)
-                        .labelsHidden()
-                        .font(.callout)
+                    noteDate($exhibition.participatingDate)
                 } else if isWorkLog {
-                    DatePicker("", selection: $workLog.date, displayedComponents: .date)
-                        .labelsHidden()
-                        .font(.callout)
+                    noteDate($workLog.date)
                 }
 
                 Spacer()
@@ -121,9 +158,24 @@ struct NoteDetailView: View {
         }
     }
 
+    @ViewBuilder
+    private func noteDate(_ date: Binding<Date>, includesTime: Bool = false) -> some View {
+        if isEditing {
+            DatePicker("", selection: date, displayedComponents: includesTime ? [.date, .hourAndMinute] : .date)
+                .labelsHidden()
+                .font(.callout)
+        } else {
+            Text(date.wrappedValue, format: includesTime
+                 ? .dateTime.year().month().day().hour().minute()
+                 : .dateTime.year().month().day())
+                .font(.callout)
+        }
+    }
+
     private var freeMemoField: some View {
         NoteMemoEditor(text: $note.content, rtf: isMeeting ? $meeting.memoRTFData : $note.contentRTFData)
             .frame(height: note.isCustomCategory ? 220 : 120)
+            .disabled(!isEditing)
     }
 
     private var meetingsOnWorkLogDate: [Note] {
@@ -135,39 +187,20 @@ struct NoteDetailView: View {
     private var templateSection: some View {
         if note.isCustomCategory {
             if !customTemplate.sections.isEmpty {
-                CustomNoteTemplateView(data: $customTemplate, attachmentPaths: $note.attachmentPaths)
+                CustomNoteTemplateView(data: $customTemplate, attachmentPaths: $note.attachmentPaths, isEditing: isEditing)
             }
         } else {
             switch note.category {
             case .workLog:
                 WorkLogTemplateView(data: $workLog, attachmentPaths: $note.attachmentPaths,
-                                    meetings: meetingsOnWorkLogDate, onOpenMeeting: onOpenMeeting)
+                                    isEditing: isEditing, meetings: meetingsOnWorkLogDate, onOpenMeeting: onOpenMeeting)
             case .meetingMinutes:
                 MeetingMinutesTemplateView(data: $meeting, businessCards: note.businessCards ?? [])
+                    .disabled(!isEditing)
             case .exhibition:
                 ExhibitionTemplateView(data: $exhibition, businessCards: note.businessCards ?? [])
+                    .disabled(!isEditing)
             }
-        }
-    }
-
-    private func loadTemplate() {
-        if note.isCustomCategory {
-            let storedTemplate = TemplateCoder.decode(CustomNoteTemplateData.self, from: note.templateData)
-            let categoryTemplate = note.customCategory.flatMap { TemplateCoder.decode(CustomNoteTemplateData.self, from: $0.templateData) }
-            customTemplate = storedTemplate ?? categoryTemplate ?? .init()
-            if storedTemplate == nil, let categoryTemplate {
-                note.templateData = TemplateCoder.encode(categoryTemplate)
-            }
-            return
-        }
-        switch note.category {
-        case .workLog:
-            workLog = note.workLogTemplate ?? .init()
-            updateWorkLogTitleIfNeeded()
-        case .meetingMinutes:
-            meeting = note.meetingTemplate ?? .init()
-        case .exhibition:
-            exhibition = note.exhibitionTemplate ?? .init()
         }
     }
 

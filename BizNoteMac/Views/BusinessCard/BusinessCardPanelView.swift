@@ -185,12 +185,12 @@ struct BusinessCardPanelView: View {
 
     private func save(draft: BusinessCardDraft, image: NSImage?) {
         var d = draft
-        if let image {
-            if let path = AttachmentStorage.saveCardImage(image, id: d.id) {
-                d.imagePath = path
-            }
+        let imageData = image?.pngData()
+        if let imageData, let path = AttachmentStorage.saveCardImage(imageData, id: d.id) {
+            d.imagePath = path
         }
         let card = d.makeBusinessCard()
+        card.imageData = imageData
         card.note = note
         context.insert(card)
         if note.businessCards == nil {

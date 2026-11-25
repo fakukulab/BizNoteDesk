@@ -7,6 +7,7 @@ import ContactsUI
 /// and reports the chosen contact back to the caller. Renders as a plain
 /// icon by default, or as a titled button when `title` is provided.
 struct ContactPickerButton: NSViewRepresentable {
+    @Environment(\.isEnabled) private var isEnabled
     var onSelect: (CNContact) -> Void
     var title: String? = nil
 
@@ -27,11 +28,13 @@ struct ContactPickerButton: NSViewRepresentable {
             button.isBordered = false
             button.bezelStyle = .regularSquare
         }
+        button.isEnabled = isEnabled
         context.coordinator.button = button
         return button
     }
 
     func updateNSView(_ nsView: NSButton, context: Context) {
+        nsView.isEnabled = isEnabled
         context.coordinator.onSelect = onSelect
     }
 
@@ -49,12 +52,13 @@ struct ContactPickerButton: NSViewRepresentable {
         @objc func showPicker(_ sender: NSButton) {
             Task { @MainActor in
                 let granted = await ContactsService.requestAccess()
-                guard granted, let button else { return }
+                guard granted, let button, button.isEnabled, button.window != nil else { return }
                 picker.showRelative(to: button.bounds, of: button, preferredEdge: .maxY)
             }
         }
 
         func contactPicker(_ picker: CNContactPicker, didSelect contact: CNContact) {
+            guard let button, button.isEnabled, button.window != nil else { return }
             onSelect(contact)
         }
     }

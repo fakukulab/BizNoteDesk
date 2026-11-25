@@ -61,8 +61,23 @@ final class BusinessCard {
     var memo: String = ""
 
     var imagePath: String = ""
+    @Attribute(.externalStorage) var imageData: Data? = nil
 
     var note: Note?
+
+    static func backfillImageData(in container: ModelContainer) throws {
+        let context = ModelContext(container)
+        let missingImages = FetchDescriptor<BusinessCard>(
+            predicate: #Predicate { $0.imageData == nil && !$0.imagePath.isEmpty }
+        )
+        for card in try context.fetch(missingImages) {
+            if let data = AttachmentStorage.cardImageData(path: card.imagePath, id: card.id) {
+                card.imageData = data
+                // Save each image as it is read to limit the pending data in memory.
+                try context.save()
+            }
+        }
+    }
 
     init() {
         self.id = UUID()

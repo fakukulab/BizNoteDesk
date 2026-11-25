@@ -10,7 +10,10 @@ struct BusinessCardDetailView: View {
     @Environment(\.modelContext) private var context
 
     private var image: NSImage? {
-        AttachmentStorage.loadCardImage(path: card.imagePath)
+        if let data = card.imageData, let image = NSImage(data: data) {
+            return image
+        }
+        return AttachmentStorage.cardImageData(path: card.imagePath, id: card.id).flatMap(NSImage.init(data:))
     }
 
     var body: some View {
@@ -28,37 +31,38 @@ struct BusinessCardDetailView: View {
                 Form {
                     Section {
                         LabeledContent(String(localized: "card.field.name")) {
-                            TextField("", text: $card.name).textFieldStyle(.roundedBorder)
+                            cardField($card.name)
                         }
                         LabeledContent(String(localized: "card.field.company")) {
-                            TextField("", text: $card.company).textFieldStyle(.roundedBorder)
+                            cardField($card.company)
                         }
                         LabeledContent(String(localized: "card.field.department")) {
-                            TextField("", text: $card.department).textFieldStyle(.roundedBorder)
+                            cardField($card.department)
                         }
                         LabeledContent(String(localized: "card.field.jobTitle")) {
-                            TextField("", text: $card.jobTitle).textFieldStyle(.roundedBorder)
+                            cardField($card.jobTitle)
                         }
                     }
                     Section {
                         LabeledContent(String(localized: "card.field.email")) {
-                            TextField("", text: $card.email).textFieldStyle(.roundedBorder)
+                            cardField($card.email)
                         }
                         LabeledContent(String(localized: "card.field.phone")) {
-                            TextField("", text: $card.phone).textFieldStyle(.roundedBorder)
+                            cardField($card.phone)
                         }
                         LabeledContent(String(localized: "card.field.officePhone")) {
-                            TextField("", text: $card.officePhone).textFieldStyle(.roundedBorder)
+                            cardField($card.officePhone)
                         }
                     }
                     Section {
                         LabeledContent(String(localized: "card.field.website")) {
-                            TextField("", text: $card.website).textFieldStyle(.roundedBorder)
+                            cardField($card.website)
                         }
                         LabeledContent(String(localized: "card.field.memo")) {
                             TextEditor(text: $card.memo)
                                 .frame(minHeight: 60)
                                 .macEditorField()
+                                .multilineTextAlignment(.leading)
                         }
                     }
                     if let note = card.note {
@@ -72,7 +76,6 @@ struct BusinessCardDetailView: View {
                 }
                 .formStyle(.grouped)
                 .scrollContentBackground(.hidden)
-                .multilineTextAlignment(.leading)
             }
             .padding(24)
         }
@@ -86,6 +89,12 @@ struct BusinessCardDetailView: View {
         .onChange(of: card.officePhone) { _, _ in save() }
         .onChange(of: card.website) { _, _ in save() }
         .onChange(of: card.memo) { _, _ in save() }
+    }
+
+    private func cardField(_ text: Binding<String>) -> some View {
+        TextField("", text: text)
+            .textFieldStyle(.roundedBorder)
+            .multilineTextAlignment(.leading)
     }
 
     private func save() {
